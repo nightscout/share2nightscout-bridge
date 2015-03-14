@@ -112,4 +112,15 @@ upload to Azure as a web job.  Set the environment variables above as App Settin
 Shortly after creating the webjob, it should start, and your
 Nightscout rig should receive data as usual.
 
+This project is not FDA approved, not recommended for therapy, and not
+recommended by [Dexcom][dexcom-eula].
+
+[dexcom-eula]: http://www.dexcom.com/node/5421
+
+#### Azure Account Quotas
+
+We **highly recommend** using this only on the paid Azure Share plans.
+They cost around $10/month.  Using this program with Azure Free
+website causes the usage to exceed the free quotas.  Feel free to try
+it out, but watch out for those quotas.
 
