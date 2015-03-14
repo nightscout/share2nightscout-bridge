@@ -196,6 +196,7 @@ function engine (opts) {
       }
     }
   }
+  my( );
 
   return my;
 }
