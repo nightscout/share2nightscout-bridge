@@ -1,8 +1,31 @@
+/**
+ * Author: Ben West
+ * https://github.com/bewest
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * 
+ *
+ * @description: Allows user to store their Dexcom data in their own
+ * Nightscout server by facilitating the transfer of latest records
+ * from Dexcom's server into theirs.
+ */
 var request = require('request');
 var qs = require('querystring');
 var crypto = require('crypto');
 
 
+// Defaults
 var Defaults = {
   "applicationId":"d89443d2-327c-4a6f-89e5-496bbb0317db"
 , "agent": "Dexcom Share/3.0.2.11 CFNetwork/711.2.23 Darwin/14.0.0"
@@ -14,8 +37,8 @@ var Defaults = {
 , nightscout_upload: '/api/v1/entries.json'
 };
 
-    // -H "Accept: application/json" -H "Content-Length: 0"
 
+// assemble the POST body for the login endpoint
 function login_payload (opts) {
   var body = {
     "password": opts.password
@@ -25,6 +48,7 @@ function login_payload (opts) {
   return body;
 }
 
+// Login to Dexcom's server.
 function authorize (opts, then) {
   var url = Defaults.login;
   var body = login_payload(opts);
@@ -33,9 +57,12 @@ function authorize (opts, then) {
                 , 'Accept': Defaults.accept };
   var req ={ uri: url, body: body, json: true, headers: headers, method: 'POST'
            , rejectUnauthorized: false }; 
+  // Asynchronously calls the `then` function when the request's I/O
+  // is done.
   return request(req, then);
 }
 
+// Assemble query string for fetching data.
 function fetch_query (opts) {
   // ?sessionID=e59c836f-5aeb-4b95-afa2-39cf2769fede&minutes=1440&maxCount=1"
   var q = {
@@ -47,6 +74,8 @@ function fetch_query (opts) {
   return url;
 }
 
+// Asynchronously fetch data from Dexcom's server.
+// Will fetch `minutes` and `maxCount` records.
 function fetch (opts, then) {
   var url = fetch_query(opts);
   var body = "";
@@ -60,6 +89,7 @@ function fetch (opts, then) {
   return request(req, then);
 }
 
+// Authenticate and fetch data from Dexcom.
 function do_everything (opts, then) {
   var login_opts = opts.login;
   var fetch_opts = opts.fetch;
@@ -74,6 +104,7 @@ function do_everything (opts, then) {
 
 }
 
+// Map Dexcom's property values to Nightscout's.
 function dex_to_entry (d) {
 /*
 [ { DT: '/Date(1426292016000-0700)/',
@@ -97,6 +128,7 @@ function dex_to_entry (d) {
   return entry;
 }
 
+// Record data into Nightscout.
 function report_to_nightscout (opts, then) {
   var shasum = crypto.createHash('sha1');
   var hash = shasum.update(opts.API_SECRET);
@@ -110,6 +142,7 @@ function report_to_nightscout (opts, then) {
 
 }
 
+// If run from commandline, run the whole program.
 if (!module.parent) {
   var args = process.argv.slice(2);
   var config = {
@@ -134,14 +167,16 @@ if (!module.parent) {
         login: config
       , fetch: fetch_config
       };
-      // do_everything(meta, console.log.bind(console, 'EVERYTHING'));
+      // Authorize and fetch from Dexcom.
       do_everything(meta, function (err, glucose) {
         console.log('From Dexcom', err, glucose);
         if (glucose) {
+          // Translate to Nightscout data.
           var entries = glucose.map(dex_to_entry);
           console.log('Entries', entries);
           if (ns_config.endpoint) {
             ns_config.entries = entries;
+            // Send data to Nightscout.
             report_to_nightscout(ns_config, function (err, response, body) {
               console.log("Nightscout upload", 'error', err, 'status', response.statusCode, body);
 
