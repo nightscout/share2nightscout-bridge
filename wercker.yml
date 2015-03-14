@@ -5,6 +5,7 @@ build:
       - script:
           name: "install prereqs"
           code: |-
+              sudo apt-get update
               sudo apt-get install -y zip
       - script:
           name: "npm install"
