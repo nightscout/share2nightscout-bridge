@@ -7,3 +7,23 @@ build:
           code: |-
             pwd
             npm install
+            git archive -o nightscout-sidecar.zip HEAD
+            zip -r nightscout-sidecar.zip node_modules/
+            zipinfo nightscout-sidecar.zip
+            cp nightscout-sidecar.zip $WERCKER_OUTPUT_DIR/
+            node -p 'require("./package.json").version' | tee $WERCKER_OUTPUT_DIR/version
+
+deploy:
+    steps:
+        - script:
+            name: "debug check on things"
+            code: ls -alh
+        - script:
+            name: "get current version"
+            code: export APP_VERSION=$(cat version)
+        - github-create-release
+            token: $GITHUB_TOKEN
+            tag: $APP_VERSION
+        - github-upload-asset
+            token: $GITHUB_TOKEN
+            file: nightscout-sidecar.zip
