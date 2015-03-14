@@ -1,6 +1,8 @@
 /**
  * Author: Ben West
  * https://github.com/bewest
+ * Advisor: Scott Hanselman
+ * http://www.hanselman.com/blog/BridgingDexcomShareCGMReceiversAndNightscout.aspx
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
