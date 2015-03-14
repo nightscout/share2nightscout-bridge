@@ -2,6 +2,9 @@
 
 Fetches data from Dexcom's webservice and puts it in Nightscout.
 
+* [Releases][releases]
+* [![wercker status](https://app.wercker.com/status/1d9a86d110cb9d42c844fa60d084e5c4/m "wercker status")](https://app.wercker.com/project/bykey/1d9a86d110cb9d42c844fa60d084e5c4)
+
 ### Environment variables
 
 These are required.
