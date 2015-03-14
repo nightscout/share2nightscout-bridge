@@ -207,20 +207,31 @@ engine.authorize = authorize;
 engine.authorize_fetch = do_everything;
 module.exports = engine;
 
+function readENV(varName, defaultValue) {
+    //for some reason Azure uses this prefix, maybe there is a good reason
+    var value = process.env['CUSTOMCONNSTR_' + varName]
+        || process.env['CUSTOMCONNSTR_' + varName.toLowerCase()]
+        || process.env[varName]
+        || process.env[varName.toLowerCase()];
+
+    return value || defaultValue;
+}
 
 // If run from commandline, run the whole program.
 if (!module.parent) {
   var args = process.argv.slice(2);
   var config = {
-    accountName: process.env['DEXCOM_ACCOUNT_NAME']
-  , password: process.env['DEXCOM_PASSWORD']
+    accountName: readENV('DEXCOM_ACCOUNT_NAME')
+  , password: readENV('DEXCOM_PASSWORD')
   };
   var ns_config = {
-    API_SECRET: process.env['API_SECRET']
-  , endpoint: process.env['NS']
+    API_SECRET: readENV('API_SECRET')
+  , endpoint: readENV('NS', 'https://' + readENV('WEBSITE_HOSTNAME'))
   };
-  var interval = process.env['SHARE_INTERVAL'] || 60000 * 5;
-  var fetch_config = { maxCount: process.env.maxCount || 1, minutes: process.env.minutes || 1440 };
+  var interval = readENV('SHARE_INTERVAL', 60000 * 5);
+  var fetch_config = { maxCount: readENV('maxCount', 1)
+    , minutes: readENV('minutes', 1440)
+  };
   var meta = {
     login: config
   , fetch: fetch_config

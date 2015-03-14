@@ -9,10 +9,21 @@ Fetches data from Dexcom's webservice and puts it in Nightscout.
 
 These are required.
 
+Highly recommend setting these as `Custom` type of
+**Connection String** environment variable inside of Azure.
+
+Most people with a pre-existing Nightscout with the API enabled (using
+the `API_SECRET`) will only need to add two more custom connection
+string variables, `DEXCOM_PASSWORD`, and `DEXCOM_ACCOUNT_NAME`.  The
+app uses these details to stay connected, bridging the "data streams"
+over the web.  If the API is not already set up using the
+`API_SECRET`, then the third variable is also needed, set it to any
+long phrase of your choosing, it needs to be longer than 12
+characters.
+
 * **DEXCOM_ACCOUNT_NAME** - Dexcom Share user name
 * **DEXCOM_PASSWORD** - Dexcom Share password
-* **API_SECRET** - (already set in Azure) your Nightscout API Secret
-* **NS** - Your fully qualified `https://foo.bar.example.com` endpoint with no path.
+* **API_SECRET** - (might already be set in Azure) your Nightscout API Secret
 
 #### Features
 
@@ -25,10 +36,23 @@ These features can be used to emulate gap sync.
 * **SHARE_INTERVAL** - default: `60000 * 5`, number of ms to wait between
   updates
 
+#### Old not needed
+
+Deprecated:
+
+* **NS** - Your fully qualified `https://bar.example.com` endpoint
+  with no path.  This is similar to your `/pebble` endpoint, but
+  without the `/pebble` part.
+
+We now look at **`WEBSITE_HOSTNAME`** environment variable, which is set
+automatically by [Azure][azure-environment].
+
+[azure-environment]: https://github.com/projectkudu/kudu/wiki/Azure-runtime-environment
+
 
 ## Output/logs
 
-The output looks like this when it works:
+The output looks something like this when it works:
 ```
 $ env $(cat shansel.env )  node index.js 
 Entries [ { sgv: 70,
@@ -67,4 +91,25 @@ Visit the [releases page][releases], download `nightscout-sidecar.zip`, and
 upload to Azure as a web job.  Set the environment variables above as App Settings.
 
 [releases]: https://github.com/bewest/share2nightscout-bridge/releases
+
+### Prerequisites:
+
+* A working Nightscout web app, and an Azure account.
+* Download `nightscout-sidecar.zip` file from the
+  [releases page][releases]
+
+### Setup
+
+* See [Azure's documentation][create-webjobs] on how to set up and
+  create web jobs.
+* Create a new `Continouous` web job
+  * upload the `nightscout-sidecar.zip` from the [releases page][releases]
+
+[create-webjobs]: http://azure.microsoft.com/en-us/documentation/articles/web-sites-create-web-jobs/
+
+### What to expect
+
+Shortly after creating the webjob, it should start, and your
+Nightscout rig should receive data as usual.
+
 
