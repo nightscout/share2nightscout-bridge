@@ -121,6 +121,7 @@ if (!module.parent) {
     API_SECRET: process.env['API_SECRET']
   , endpoint: process.env['NS']
   };
+  var fetch_config = { maxCount: process.env.maxCount || 1, minutes: process.env.minutes || 1440 };
   switch (args[0]) {
     case 'login':
       authorize(config, console.log.bind(console, 'login'));
@@ -132,17 +133,20 @@ if (!module.parent) {
     default:
       var meta = {
         login: config
-      , fetch: { maxCount: process.env.maxCount || 1, minutes: process.env.minutes || 1440 }
+      , fetch: fetch_config
       };
       // do_everything(meta, console.log.bind(console, 'EVERYTHING'));
       do_everything(meta, function (err, glucose) {
-        console.log('huh', arguments);
+        console.log('From Dexcom', err, glucose);
         if (glucose) {
           var entries = glucose.map(dex_to_entry);
           console.log('Entries', entries);
           if (ns_config.endpoint) {
             ns_config.entries = entries;
-            report_to_nightscout(ns_config, console.log.bind(console, 'NIGHTSCOUT'));
+            report_to_nightscout(ns_config, function (err, response, body) {
+              console.log("Nightscout upload", 'error', err, 'status', response.statusCode, body);
+
+            });
           }
         }
       });
