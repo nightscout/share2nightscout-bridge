@@ -132,7 +132,7 @@ if (!module.parent) {
     default:
       var meta = {
         login: config
-      , fetch: { }
+      , fetch: { maxCount: process.env.maxCount || 1, minutes: process.env.minutes || 1440 }
       };
       // do_everything(meta, console.log.bind(console, 'EVERYTHING'));
       do_everything(meta, function (err, glucose) {
