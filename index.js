@@ -65,7 +65,6 @@ function do_everything (opts, then) {
   authorize(login_opts, function (err, res, body) {
     fetch_opts.sessionID = body;
     fetch(fetch_opts, function (err, res, glucose) {
-      console.log('GLUCOSE', glucose);
       then(glucose);
 
     });
