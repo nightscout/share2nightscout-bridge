@@ -15,13 +15,6 @@ var Defaults = {
 
     // -H "Accept: application/json" -H "Content-Length: 0"
 
-function session ( ) {
-  function my (opts) {
-
-  }
-  return my;
-}
-
 function login_payload (opts) {
   var body = {
     "password": opts.password
@@ -66,6 +59,20 @@ function fetch (opts, then) {
   return request(req, then);
 }
 
+function do_everything (opts, then) {
+  var login_opts = opts.login;
+  var fetch_opts = opts.fetch;
+  authorize(login_opts, function (err, res, body) {
+    fetch_opts.sessionID = body;
+    fetch(fetch_opts, function (err, res, glucose) {
+      console.log('GLUCOSE', glucose);
+      then(glucose);
+
+    });
+  });
+
+}
+
 if (!module.parent) {
   var args = process.argv.slice(2);
   var config = {
@@ -82,7 +89,13 @@ if (!module.parent) {
       fetch(config, console.log.bind(console, 'fetched'));
       break;
     default:
+      var meta = {
+        login: config
+      , fetch: { }
+      };
+      do_everything(meta, console.log.bind(console, 'EVERYTHING'));
       break;
+
   }
 
 }
