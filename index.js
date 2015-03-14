@@ -201,6 +201,12 @@ function engine (opts) {
   return my;
 }
 
+// Provide public, testable API
+engine.fetch = fetch;
+engine.authorize = authorize;
+engine.authorize_fetch = do_everything;
+module.exports = engine;
+
 
 // If run from commandline, run the whole program.
 if (!module.parent) {
