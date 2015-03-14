@@ -142,6 +142,63 @@ function report_to_nightscout (opts, then) {
 
 }
 
+function engine (opts) {
+
+  var failures = 0;
+  function my ( ) {
+    console.log('RUNNING', 'failures', failures);
+    if (my.sessionID) {
+      var fetch_opts = new Object(opts.fetch);
+      fetch_opts.sessionID = my.sessionID;
+      fetch(fetch_opts, function (err, res, glucose) {
+        if (res.statusCode < 400) {
+          to_nightscout(glucose);
+        } else {
+          my.sessionID = null;
+          refresh_token( );
+        }
+      });
+    } else {
+      failures++;
+      refresh_token( );
+    }
+  }
+
+  function refresh_token ( ) {
+    console.log('Fetching new token');
+    authorize(opts.login, function (err, res, body) {
+      if (!err && body) {
+        my.sessionID = body;
+        failures = 0;
+        my( );
+      } else {
+        failures++;
+        console.log("Error refreshing token", err);
+      }
+    });
+  }
+
+  function to_nightscout (glucose) {
+    var ns_config = new Object(opts.nightscout);
+    if (glucose) {
+      // Translate to Nightscout data.
+      var entries = glucose.map(dex_to_entry);
+      console.log('Entries', entries);
+      if (ns_config.endpoint) {
+        ns_config.entries = entries;
+        // Send data to Nightscout.
+        report_to_nightscout(ns_config, function (err, response, body) {
+          console.log("Nightscout upload", 'error', err, 'status', response.statusCode, body);
+
+        });
+      }
+    }
+  }
+
+  return my;
+}
+
+
 // If run from commandline, run the whole program.
 if (!module.parent) {
   var args = process.argv.slice(2);
@@ -153,7 +210,13 @@ if (!module.parent) {
     API_SECRET: process.env['API_SECRET']
   , endpoint: process.env['NS']
   };
+  var interval = process.env['SHARE_INTERVAL'] || 60000 * 5;
   var fetch_config = { maxCount: process.env.maxCount || 1, minutes: process.env.minutes || 1440 };
+  var meta = {
+    login: config
+  , fetch: fetch_config
+  , nightscout: ns_config
+  };
   switch (args[0]) {
     case 'login':
       authorize(config, console.log.bind(console, 'login'));
@@ -162,11 +225,10 @@ if (!module.parent) {
       config = { sessionID: args[1] };
       fetch(config, console.log.bind(console, 'fetched'));
       break;
-    default:
-      var meta = {
-        login: config
-      , fetch: fetch_config
-      };
+    case 'testdaemon':
+      setInterval(engine(meta), 2500);
+      break;
+    case 'run':
       // Authorize and fetch from Dexcom.
       do_everything(meta, function (err, glucose) {
         console.log('From Dexcom', err, glucose);
@@ -184,6 +246,10 @@ if (!module.parent) {
           }
         }
       });
+      break;
+    default:
+      setInterval(engine(meta), interval);
+      break;
       break;
   }
 }
