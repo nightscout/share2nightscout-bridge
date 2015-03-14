@@ -1,14 +1,27 @@
 {
-  "name": "dexcom-share-web",
+  "name": "share2nightscout-bridge",
   "version": "0.0.1",
-  "description": "",
+  "description": "Fetches data from Dexcom's webservice and puts it in Nightscout.",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "",
-  "license": "BSD-2-Clause",
+  "author": "Ben West",
+  "license": "GPLv3",
   "dependencies": {
     "request": "~2.53.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/bewest/share2nightscout-bridge.git"
+  },
+  "keywords": [
+    "dexcom",
+    "bridge",
+    "nightscout",
+    "cgm"
+  ],
+  "bugs": {
+    "url": "https://github.com/bewest/share2nightscout-bridge/issues"
   }
 }
