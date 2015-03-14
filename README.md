@@ -1,4 +1,4 @@
-# dexcom webservice
+# share2nightscout-bridge
 
 Fetches data from Dexcom's webservice and puts it in Nightscout.
 
@@ -57,4 +57,11 @@ If it can log in again, it will continue to re-use the new token to
 fetch data, storing it into Nightscout.
 
 [blog-post]: http://www.hanselman.com/blog/BridgingDexcomShareCGMReceiversAndNightscout.aspx
+
+## How to use/install
+
+Visit the [releases page][releases], download `nightscout-sidecar.zip`, and
+upload to Azure as a web job.  Set the environment variables above as App Settings.
+
+[releases]: https://github.com/bewest/share2nightscout-bridge/releases
 
