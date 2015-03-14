@@ -147,9 +147,6 @@ if (!module.parent) {
         }
       });
       break;
-
   }
-
 }
-
 
