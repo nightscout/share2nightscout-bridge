@@ -45,16 +45,16 @@ receiver to Dexcom's webservices.  This program fetches a user's data
 from Dexcom's servers, and stores it in their own Nightscout server.
 
 By default, this program run as `node index.js`, will loop forever.
-[As described Scott][blog-post], one of my many advisors, this logs in
-to Dexcom Share as the data publisher.  It re-uses the token every `5`
-minutes to fetch the `maxCount` latest glucose records within the last
-specified `minutes`.  This information is then sent to the user's
-specified Nightscout install, making the data available to the beloved
-pebble watch and other equipment owned and operated by the receiver's
-owner.  It will continue to re-use the same `sessionID` until it
-expires, at which point it should attempt to log in again.  If it can
-log in again, it will continue to re-use the new token to fetch data,
-storing it into Nightscout.
+[As described by Scott Hanselman][blog-post], one of my many advisors,
+this logs in to Dexcom Share as the data publisher.  It re-uses the
+token every `5` minutes to fetch the `maxCount` latest glucose records
+within the last specified `minutes`.  This information is then sent to
+the user's specified Nightscout install, making the data available to
+the beloved pebble watch and other equipment owned and operated by the
+receiver's owner.  It will continue to re-use the same `sessionID`
+until it expires, at which point it should attempt to log in again.
+If it can log in again, it will continue to re-use the new token to
+fetch data, storing it into Nightscout.
 
 [blog-post]: http://www.hanselman.com/blog/BridgingDexcomShareCGMReceiversAndNightscout.aspx
 
