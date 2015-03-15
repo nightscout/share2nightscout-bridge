@@ -27,11 +27,14 @@ characters.
 
 #### Features
 
-These environment variables are optional.
+These environment variables are optional, you can most likely ignore
+this section.
+These features can be used to emulate gap sync.
+
 * **maxCount** - default: `1`, maximum number of records to process
 * **minutes** - default: `1440`, number of minutes to include
 
-These features can be used to emulate gap sync.
+This one is completely optional.
 
 * **SHARE_INTERVAL** - default: `60000 * 5`, number of ms to wait between
   updates
