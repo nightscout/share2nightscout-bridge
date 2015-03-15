@@ -36,8 +36,8 @@ These features can be used to emulate gap sync.
 
 This one is completely optional.
 
-* **SHARE_INTERVAL** - default: `60000 * 5`, number of ms to wait between
-  updates
+* **SHARE_INTERVAL** - default: `60000 * 2.5`, number of ms to wait between
+  updates.  Default is `2.5` minutes.
 
 #### Old not needed
 
@@ -105,7 +105,7 @@ upload to Azure as a web job.  Set the environment variables above as App Settin
 
 * See [Azure's documentation][create-webjobs] on how to set up and
   create web jobs.
-* Create a new `Continouous` web job
+* Create a new `Continuous` web job
   * upload the `nightscout-sidecar.zip` from the [releases page][releases]
 
 [create-webjobs]: http://azure.microsoft.com/en-us/documentation/articles/web-sites-create-web-jobs/
