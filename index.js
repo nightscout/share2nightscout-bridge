@@ -39,6 +39,35 @@ var Defaults = {
 , nightscout_upload: '/api/v1/entries.json'
 };
 
+var DIRECTIONS = {
+  NONE: 0
+, DoubleUp: 1
+, SingleUp: 2
+, FortyFiveUp: 3
+, Flat: 4
+, FortyFiveDown: 5
+, SingleDown: 6
+, DoubleDown: 7
+, 'NOT COMPUTABLE': 8
+, 'RATE OUT OF RANGE': 9
+};
+var Trends = (function ( ) {
+  var keys = Object.keys(DIRECTIONS);
+  var trends = keys.sort(function (a, b) {
+    return DIRECTIONS[a] - DIRECTIONS[b];
+  });
+  return trends;
+})( );
+function directionToTrend (direction) {
+  var trend = 8;
+  if (direction in DIRECTIONS) {
+    trend = DIRECTIONS[direction];
+  }
+  return trend;
+}
+function trendToDirection (trend) {
+  return Trends[trend] || Trends[0];
+}
 
 // assemble the POST body for the login endpoint
 function login_payload (opts) {
@@ -123,6 +152,7 @@ function dex_to_entry (d) {
   , date: wall
   , dateString: date.toISOString( )
   , trend: d.Trend
+  , direction: trendToDirection(d.Trend)
   , device: 'share2'
   , type: 'sgv'
   // , device: 'dexcom'
