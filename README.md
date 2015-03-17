@@ -122,8 +122,18 @@ recommended by [Dexcom][dexcom-eula].
 
 #### Azure Account Quotas
 
-We **highly recommend** using this only on the paid Azure Share plans.
-They cost around $10/month.  Using this program with Azure Free
+We **highly recommend** using this only on the paid Azure **Basic** plans.
+They cost around $50/month.  Using this program with Azure Free
 website causes the usage to exceed the free quotas.  Feel free to try
-it out, but watch out for those quotas.
+it out, but watch out for those quotas.  You can partner with family and
+friends to run up to 20 sites on a single plan.  Because you have a
+paid plan, the service will have paid performance and support, with
+better terms on uptimes.  It may be possible to also host mongo on the
+same paid account, in which case it the system will **fail much less
+often**, because of the **Basic** support.
+
+See the [billing comments][billing-issue] for more details and
+feedback.
+
+[billing-issue]: https://github.com/bewest/share2nightscout-bridge/issues/2
 
