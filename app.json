@@ -22,3 +22,8 @@
       "value": "",
       "required": true
     }
+  },
+  "addons": [
+    "mongolab:sandbox"
+  ]
+}
