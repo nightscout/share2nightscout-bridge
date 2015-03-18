@@ -1,0 +1,25 @@
+{
+    "name": "share2nightscout-bridge",
+    "repository": "https://github.com/bewest/share2nightscout-bridge",
+    "env": {
+    "API_SECRET": {
+      "description": "REQUIRED: User generated password used for REST API (12 character minimum).",
+      "value": "",
+      "required": true
+    },
+    "DEXCOM_ACCOUNT_NAME": {
+      "description": "Dexcom share2 user name.",
+      "value": "",
+      "required": true
+    },
+    "DEXCOM_PASSWORD": {
+      "description": "Dexcom share2 password.",
+      "value": "",
+      "required": true
+    },
+    "Website Hostname": {
+      "description": "url for Nightscout site. Do not include https://. Example - yourT1Dchild.herokuapp.com or yourT1Dchild.azurewebsites.net.",
+      "value": "",
+      "required": true
+    },
+    }
