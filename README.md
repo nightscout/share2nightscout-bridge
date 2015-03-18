@@ -8,9 +8,13 @@ Fetches data from Dexcom's webservice and puts it in Nightscout.
 [heroku-url]: https://heroku.com/deploy
 If you use the Deploy to Heroku button, follow these instructions:
 1. Read settings instructions carefully. Especially the instruction for url syntax for WEBSITE_HOSTNAME
+
 2. When deployment completes, click on "make your first edit"
+
 3. Dynos - Edit - Move slider from "0" to "1"
+
 4. Click save
+
 5. Wait patiently for 3 minutes and you will see updates in mongo and on your site!
 
 * [Releases][releases]
