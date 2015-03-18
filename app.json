@@ -24,6 +24,6 @@
     }
   },
   "addons": [
-    "heroku ps:scale worker=1"
+    "scale worker=1"
   ]
 }
