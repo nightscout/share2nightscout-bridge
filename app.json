@@ -21,9 +21,5 @@
       "description": "url for Nightscout site. Do not include https://. Example - yourT1Dchild.herokuapp.com or yourT1Dchild.azurewebsites.net.",
       "value": "",
       "required": true
-    }
-  },
-  [
-    "heroku ps:scale worker=1"
-  ]
+    },
 }
