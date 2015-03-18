@@ -3,7 +3,6 @@
 Fetches data from Dexcom's webservice and puts it in Nightscout.
 
 [![Deploy to Heroku][heroku-img]][heroku-url]
-[![Deploy to Azure](http://azuredeploy.net/deploybutton.png)](https://azuredeploy.net/)
 
 [heroku-img]: https://www.herokucdn.com/deploy/button.png
 [heroku-url]: https://heroku.com/deploy
