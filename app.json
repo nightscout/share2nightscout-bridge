@@ -21,8 +21,9 @@
       "description": "url for Nightscout site. Do not include https://. Example - yourT1Dchild.herokuapp.com or yourT1Dchild.azurewebsites.net.",
       "value": "",
       "required": true
-    },
-    "addons": [
+    }
+  },
+  "addons": [
     "mongolab:sandbox"
   ]
 }
