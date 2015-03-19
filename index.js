@@ -258,7 +258,7 @@ if (!module.parent) {
     API_SECRET: readENV('API_SECRET')
   , endpoint: readENV('NS', 'https://' + readENV('WEBSITE_HOSTNAME'))
   };
-  var interval = readENV('SHARE_INTERVAL', 60000 * 2.5);
+  var interval = readENV('SHARE_INTERVAL', 60000 * 1);
   var fetch_config = { maxCount: readENV('maxCount', 1)
     , minutes: readENV('minutes', 1440)
   };
