@@ -2,10 +2,49 @@
 
 Fetches data from Dexcom's webservice and puts it in Nightscout.
 
+## Status
+
+* [Releases][releases]
+* [![wercker status](https://app.wercker.com/status/1d9a86d110cb9d42c844fa60d084e5c4/m "wercker status")](https://app.wercker.com/project/bykey/1d9a86d110cb9d42c844fa60d084e5c4)
+
+## How to use
+
+#### Prerequisites:
+You probably don't need both Azure and Heroku.  Only one is required.
+
+* A working Nightscout web app
+
+### Classic Azure
+
+Quick overview, see the [3 step tutorial][tutorial] for more information with
+screenshots.
+
+> Visit the [releases page][releases], download `nightscout-sidecar.zip`, and
+> upload to Azure as a web job.  Set the environment variables as Connection Strings.
+
+[releases]: https://github.com/bewest/share2nightscout-bridge/releases
+[tutorial]: https://github.com/bewest/share2nightscout-bridge/issues/1
+
+
+1. Download `nightscout-sidecar.zip` file from the
+   [releases page][releases]
+
+1. Find the **Configure** tab to set the required `DEXCOM_PASSWORD` and
+   `DEXCOM_ACCOUNT_NAME` variables in Connection Settings area.
+
+1. In your Azure site, Create a new `Continuous` web job
+  * upload the `nightscout-sidecar.zip` from the [releases page][releases]
+
+[create-webjobs]: http://azure.microsoft.com/en-us/documentation/articles/web-sites-create-web-jobs/
+
+
+### Heroku
+
 [![Deploy to Heroku][heroku-img]][heroku-url]
 
 [heroku-img]: https://www.herokucdn.com/deploy/button.png
 [heroku-url]: https://heroku.com/deploy
+
 If you use the Deploy to Heroku button, follow these instructions:
 1. Read settings instructions carefully. Especially the instruction for url syntax for `WEBSITE_HOSTNAME`
 
@@ -16,9 +55,6 @@ If you use the Deploy to Heroku button, follow these instructions:
 4. Click save
 
 5. Wait patiently for 3 minutes and you will see updates in mongo and on your site!
-
-* [Releases][releases]
-* [![wercker status](https://app.wercker.com/status/1d9a86d110cb9d42c844fa60d084e5c4/m "wercker status")](https://app.wercker.com/project/bykey/1d9a86d110cb9d42c844fa60d084e5c4)
 
 ### Environment variables
 
@@ -54,34 +90,22 @@ This one is completely optional.
 * **SHARE_INTERVAL** - default: `60000 * 2.5`, number of ms to wait between
   updates.  Default is `2.5` minutes.
 
-#### Old not needed
-
-Deprecated:
+#### Differences betweeen Azure and Heroku
 
 * **NS** - Your fully qualified `https://bar.example.com` endpoint
   with no path.  This is similar to your `/pebble` endpoint, but
-  without the `/pebble` part.
+  without the `/pebble` part.  It starts with `https://` has your website
+  hostname, and then nothing after it.
 
 We now look at **`WEBSITE_HOSTNAME`** environment variable, which is set
 automatically by [Azure][azure-environment].
 
+Only one of these environment variables needs to be defined; if using Azure
+everything is done automatically.  If using Heroku, we recommend setting
+`WEBSITE_HOSTNAME` during the creation step.
+
 [azure-environment]: https://github.com/projectkudu/kudu/wiki/Azure-runtime-environment
 
-
-## Output/logs
-
-The output looks something like this when it works:
-```
-$ env $(cat shansel.env )  node index.js 
-Entries [ { sgv: 70,
-    date: 1426298639000,
-    dateString: '2015-03-14T02:03:59.000Z',
-    trend: 4,
-    device: 'share2',
-    type: 'sgv' } ]
-Nightscout upload error null status 200 []
-
-```
 
 ## How it works:
 
@@ -103,28 +127,6 @@ fetch data, storing it into Nightscout.
 
 [blog-post]: http://www.hanselman.com/blog/BridgingDexcomShareCGMReceiversAndNightscout.aspx
 
-## How to use/install
-
-Visit the [releases page][releases], download `nightscout-sidecar.zip`, and
-upload to Azure as a web job.  Set the environment variables above as App Settings.
-
-[releases]: https://github.com/bewest/share2nightscout-bridge/releases
-
-### Prerequisites:
-
-* A working Nightscout web app, and an Azure account.
-* Download `nightscout-sidecar.zip` file from the
-  [releases page][releases]
-
-### Setup
-
-* See [Azure's documentation][create-webjobs] on how to set up and
-  create web jobs.
-* Create a new `Continuous` web job
-  * upload the `nightscout-sidecar.zip` from the [releases page][releases]
-
-[create-webjobs]: http://azure.microsoft.com/en-us/documentation/articles/web-sites-create-web-jobs/
-
 ### What to expect
 
 Shortly after creating the webjob, it should start, and your
@@ -135,10 +137,34 @@ recommended by [Dexcom][dexcom-eula].
 
 [dexcom-eula]: http://www.dexcom.com/node/5421
 
+#### Output/logs
+
+The output looks something like this when it works:
+```
+$ env $(cat shansel.env )  node index.js 
+Entries [ { sgv: 70,
+    date: 1426298639000,
+    dateString: '2015-03-14T02:03:59.000Z',
+    trend: 4,
+    device: 'share2',
+    type: 'sgv' } ]
+Nightscout upload error null status 200 []
+
+```
+
 #### Azure Account Quotas
 
-We **highly recommend** using this only on the paid Azure Share plans.
-They cost around $10/month.  Using this program with Azure Free
-website causes the usage to exceed the free quotas.  Feel free to try
-it out, but watch out for those quotas.
+We **highly recommend** using this only on the paid Azure  plans.  Using this
+program with Azure Free website causes the usage to exceed the free quotas.
+Feel free to try it out, but watch out for those quotas.  You can partner with
+family and friends to run up to 20 sites on a single plan.  Because you have a
+paid plan, the service will have paid performance and support, with better
+terms on uptimes.  It may be possible to also host mongo on the same paid
+account, in which case it the system will **fail much less often**, because of
+the **Basic** support.
+
+See the [billing comments][billing-issue] for more details and
+feedback.
+
+[billing-issue]: https://github.com/bewest/share2nightscout-bridge/issues/2
 
