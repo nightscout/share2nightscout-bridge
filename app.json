@@ -1,29 +1,41 @@
 {
-    "name": "share2nightscout-bridge",
-    "repository": "https://github.com/bewest/share2nightscout-bridge",
-    "env": {
+  "name": "Share to Nightscout Bridge",
+  "repository": "https://github.com/bewest/share2nightscout-bridge",
+  "env": {
     "API_SECRET": {
-      "description": "REQUIRED: User generated password used for REST API (12 character minimum).",
+      "description": "This must match the API_SECRET password from your Nightscout website.",
       "value": "",
       "required": true
     },
     "DEXCOM_ACCOUNT_NAME": {
-      "description": "Dexcom share2 user name.",
+      "description": "Dexcom Share2 user name.",
       "value": "",
       "required": true
     },
     "DEXCOM_PASSWORD": {
-      "description": "Dexcom share2 password.",
+      "description": "Dexcom Share2 password.",
       "value": "",
       "required": true
     },
     "WEBSITE_HOSTNAME": {
-      "description": "url for Nightscout site. Do not include https://. Example - nickname.herokuapp.com or nickname.azurewebsites.net.",
+      "description": "The host name for your Nightscout website.  Example: sitename.herokuapp.com or sitename.azurewebsites.net.  Do not include http:// or https://",
       "value": "",
       "required": true
+    },
+    "maxCount": {
+      "description": "OPTIONAL: The maximum number of records to fetch per update.  Default: 1",
+      "value": ""
+    },
+    "minutes": {
+      "description": "OPTIONAL: The time window to search for new data per update.  Default: 1440 (one day in minutes)",
+      "value": ""
+    },
+    "SHARE_INTERVAL": {
+      "description": "OPTIONAL: The time to wait between each update.  Deault: 150000 (2.5 minutes in milliseconds)",
+      "value": ""
     }
   },
   "addons": [
-    "mongolab:sandbox"
+    "papertrail"
   ]
 }
