@@ -24,15 +24,18 @@
     },
     "maxCount": {
       "description": "OPTIONAL: The maximum number of records to fetch per update.  Default: 1",
-      "value": ""
+      "value": "",
+      "required": false
     },
     "minutes": {
       "description": "OPTIONAL: The time window to search for new data per update.  Default: 1440 (one day in minutes)",
-      "value": ""
+      "value": "",
+      "required": false
     },
     "SHARE_INTERVAL": {
       "description": "OPTIONAL: The time to wait between each update.  Deault: 150000 (2.5 minutes in milliseconds)",
-      "value": ""
+      "value": "",
+      "required": false
     }
   },
   "addons": [
