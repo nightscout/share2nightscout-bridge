@@ -1,9 +1,5 @@
 # share2nightscout-bridge
 
-Fetches data from Dexcom's webservice and puts it in Nightscout.
-
-## Status
-
 * [Releases][releases]
 * [![wercker status](https://app.wercker.com/status/1d9a86d110cb9d42c844fa60d084e5c4/m "wercker status")](https://app.wercker.com/project/bykey/1d9a86d110cb9d42c844fa60d084e5c4)
 
@@ -44,11 +40,6 @@ screenshots.
 
 
 ### Heroku
-
-[![Deploy to Heroku][heroku-img]][heroku-url]
-
-[heroku-img]: https://www.herokucdn.com/deploy/button.png
-[heroku-url]: https://heroku.com/deploy
 
 If you use the Deploy to Heroku button, follow these instructions:
 1. Read settings instructions carefully. Especially the instruction for url syntax for `WEBSITE_HOSTNAME`
