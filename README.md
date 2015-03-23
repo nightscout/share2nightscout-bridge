@@ -7,6 +7,11 @@ Fetches data from Dexcom's webservice and puts it in Nightscout.
 * [Releases][releases]
 * [![wercker status](https://app.wercker.com/status/1d9a86d110cb9d42c844fa60d084e5c4/m "wercker status")](https://app.wercker.com/project/bykey/1d9a86d110cb9d42c844fa60d084e5c4)
 
+[![Deploy to Heroku][heroku-img]][heroku-url]
+
+[heroku-img]: https://www.herokucdn.com/deploy/button.png
+[heroku-url]: https://heroku.com/deploy
+
 ## How to use
 
 #### Prerequisites:
