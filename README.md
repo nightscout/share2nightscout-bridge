@@ -8,6 +8,8 @@
 [heroku-img]: https://www.herokucdn.com/deploy/button.png
 [heroku-url]: https://heroku.com/deploy
 
+The Share to Nightscout bridge allows users who upload CGM data to Dexcom using Apple devices to retrieve their CGM data from Dexcom and copy it to a Nightscout website and database.  The bridge runs as a node.js process that periodically queries Dexcom's Share web services for new CGM data.  The bridge then relays the data to a Nightscout website ([cgm-remote-monitor]: https://github.com/nightscout/cgm-remote-monitor) via the REST API, which in turn stores the data in a Mongo database.
+
 ## How to use
 
 #### Prerequisites:
