@@ -18,7 +18,7 @@ share2nightscout-bridge
 [azure-environment]: https://github.com/projectkudu/kudu/wiki/Azure-runtime-environment
 [blog-post]: http://www.hanselman.com/blog/BridgingDexcomShareCGMReceiversAndNightscout.aspx
 
-The Share to Nightscout bridge copies your CGM data from Dexcom web services to a Nightscout website and database.  The bridge runs as `node.js index.js` and will loop forever, periodically querying Dexcom's Share web services for new CGM data.  The bridge relays any new data to a Nightscout website ([cgm-remote-monitor][c-r-m]) via the REST API, which in turn stores the data in a Mongo database.
+The Share to Nightscout bridge copies your CGM data from Dexcom web services to a Nightscout website.  The bridge runs as `node.js index.js` and will loop forever, periodically querying Dexcom's Share web services for new CGM data.  The bridge relays any new data to a Nightscout website ([cgm-remote-monitor][c-r-m]) via the REST API.  The website then stores the data in a Mongo database.
 
 ### Prerequisites
 
