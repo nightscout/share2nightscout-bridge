@@ -1,11 +1,13 @@
 share2nightscout-bridge
 =======================
 
-[Releases][releases]
 [![wercker status](https://app.wercker.com/status/1d9a86d110cb9d42c844fa60d084e5c4/m "wercker status")](https://app.wercker.com/project/bykey/1d9a86d110cb9d42c844fa60d084e5c4)
-[![Gitter chat][gitter-img][gitter-url]
+[![Gitter chat][gitter-img]][gitter-url]
+[Releases][releases]
+
 [![Deploy to Heroku][heroku-img]][heroku-url]
 
+[releases]: https://github.com/bewest/share2nightscout-bridge/releases
 [heroku-img]: https://www.herokucdn.com/deploy/button.png
 [heroku-url]: https://heroku.com/deploy
 [gitter-img]: https://img.shields.io/badge/Gitter-Join%20Chat%20%E2%86%92-1dce73.svg
@@ -26,7 +28,7 @@ The Share to Nightscout bridge copies your CGM data from Dexcom web services to 
 
 ### Install
 
-The Share to Nightscout bridge is supported on both Azure and Heroku.  Please see the [wiki][wiki:] for current install information.
+The Share to Nightscout bridge is supported on both Azure and Heroku.  Please see the [wiki][wiki] for current install information.
 
 ### Environment
 
