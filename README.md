@@ -22,8 +22,8 @@ The Share to Nightscout bridge copies your CGM data from Dexcom web services to 
 
 ### Prerequisites
 
-* A working Dexcom Share2 receiver paired to an Apple device that is successfully uploading data to Dexcom.  You must be able to see the Dexcom data in the Dexcom Follow app for the bridge to work.
-* Your Dexcom Share2 credentials
+* A working Dexcom Share receiver paired to an Apple device that is successfully uploading data to Dexcom.  You must be able to see the Dexcom data in the Dexcom Follow app for the bridge to work.
+* Your Dexcom Sharer username and password
 * A working Nightscout website and Mongo database
 
 ### Install
