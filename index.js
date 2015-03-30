@@ -26,6 +26,7 @@ var request = require('request');
 var qs = require('querystring');
 var crypto = require('crypto');
 
+var MIN_PASSPHRASE_LENGTH = 12;
 
 // Defaults
 var Defaults = {
@@ -250,6 +251,13 @@ function readENV(varName, defaultValue) {
 // If run from commandline, run the whole program.
 if (!module.parent) {
   var args = process.argv.slice(2);
+  if (readENV('API_SECRET').length < MIN_PASSPHRASE_LENGTH) {
+    var msg = ["API_SECRET should be at least", MIN_PASSPHRASE_LENGTH, "characters"];
+    var err = new Error(msg.join(' '));
+    // console.error(err);
+    throw err;
+    process.exit(1);
+  }
   var config = {
     accountName: readENV('DEXCOM_ACCOUNT_NAME')
   , password: readENV('DEXCOM_PASSWORD')
