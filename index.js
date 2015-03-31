@@ -258,7 +258,7 @@ if (!module.parent) {
     throw err;
     process.exit(1);
   }
-  if (readENV('DEXCOM_ACCOUNT_NAME').match(/\@/) {
+  if (readENV('DEXCOM_ACCOUNT_NAME').match(/\@/)) {
     var msg = ["DEXCOM_ACCOUNT_NAME should not be an email address"];
     var err = new Error(msg.join(' '));
     // console.error(err);
