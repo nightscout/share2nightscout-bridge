@@ -280,6 +280,21 @@ function readENV(varName, defaultValue) {
 
 // If run from commandline, run the whole program.
 if (!module.parent) {
+  if (readENV('API_SECRET').length < MIN_PASSPHRASE_LENGTH) {
+    var msg = [ "API_SECRET environment variable should be at least"
+              , MIN_PASSPHRASE_LENGTH, "characters" ];
+    var err = new Error(msg.join(' '));
+    throw err;
+    process.exit(1);
+  }
+  if (readENV('DEXCOM_ACCOUNT_NAME', '@').match(/\@/)) {
+    var msg = [ "environment variable"
+              , "DEXCOM_ACCOUNT_NAME should be"
+              , "Dexcom Share user name, not an email address"];
+    var err = new Error(msg.join(' '));
+    throw err;
+    process.exit(1);
+  }
   var args = process.argv.slice(2);
   var config = {
     accountName: readENV('DEXCOM_ACCOUNT_NAME')
@@ -299,20 +314,6 @@ if (!module.parent) {
   , nightscout: ns_config
   , firstFetchCount: readENV('firstFetchCount', 3)
   };
-  if (readENV('API_SECRET').length < MIN_PASSPHRASE_LENGTH) {
-    var msg = ["API_SECRET should be at least", MIN_PASSPHRASE_LENGTH, "characters"];
-    var err = new Error(msg.join(' '));
-    // console.error(err);
-    throw err;
-    process.exit(1);
-  }
-  if (readENV('DEXCOM_ACCOUNT_NAME').match(/\@/)) {
-    var msg = ["DEXCOM_ACCOUNT_NAME should not be an email address"];
-    var err = new Error(msg.join(' '));
-    // console.error(err);
-    throw err;
-    process.exit(1);
-  }
   switch (args[0]) {
     case 'login':
       authorize(config, console.log.bind(console, 'login'));
