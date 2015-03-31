@@ -195,7 +195,7 @@ function engine (opts) {
   function my ( ) {
     console.log('RUNNING', runs, 'failures', failures);
     if (my.sessionID) {
-      var fetch_opts = new Object(opts.fetch);
+      var fetch_opts = Object.create(opts.fetch);
       if (runs === 0) {
         console.log('First run, fetching', opts.firstFetchCount);
         fetch_opts.maxCount = opts.firstFetchCount;
@@ -230,7 +230,7 @@ function engine (opts) {
   }
 
   function to_nightscout (glucose) {
-    var ns_config = new Object(opts.nightscout);
+    var ns_config = Object.create(opts.nightscout);
     if (glucose) {
       if (runs === 0) {
         nullify_battery_status(ns_config, function (err, resp) {
