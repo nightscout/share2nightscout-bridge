@@ -26,7 +26,6 @@ var request = require('request');
 var qs = require('querystring');
 var crypto = require('crypto');
 
-var MIN_PASSPHRASE_LENGTH = 12;
 
 // Defaults
 var Defaults = {
@@ -39,6 +38,7 @@ var Defaults = {
 // ?sessionID=e59c836f-5aeb-4b95-afa2-39cf2769fede&minutes=1440&maxCount=1"
 , nightscout_upload: '/api/v1/entries.json'
 , nightscout_battery: '/api/v1/devicestatus.json'
+, MIN_PASSPHRASE_LENGTH: 12
 };
 
 var DIRECTIONS = {
@@ -256,8 +256,6 @@ function engine (opts) {
     }
   }
 
-
-
   my( );
   return my;
 }
@@ -280,9 +278,9 @@ function readENV(varName, defaultValue) {
 
 // If run from commandline, run the whole program.
 if (!module.parent) {
-  if (readENV('API_SECRET').length < MIN_PASSPHRASE_LENGTH) {
+  if (readENV('API_SECRET').length < Defaults.MIN_PASSPHRASE_LENGTH) {
     var msg = [ "API_SECRET environment variable should be at least"
-              , MIN_PASSPHRASE_LENGTH, "characters" ];
+              , Defaults.MIN_PASSPHRASE_LENGTH, "characters" ];
     var err = new Error(msg.join(' '));
     throw err;
     process.exit(1);
