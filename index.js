@@ -37,6 +37,7 @@ var Defaults = {
 , LatestGlucose: "https://share1.dexcom.com/ShareWebServices/Services/Publisher/ReadPublisherLatestGlucoseValues"
 // ?sessionID=e59c836f-5aeb-4b95-afa2-39cf2769fede&minutes=1440&maxCount=1"
 , nightscout_upload: '/api/v1/entries.json'
+, nightscout_battery: '/api/v1/devicestatus.json'
 };
 
 var DIRECTIONS = {
@@ -87,7 +88,7 @@ function authorize (opts, then) {
                 , 'Content-Type': Defaults['content-type']
                 , 'Accept': Defaults.accept };
   var req ={ uri: url, body: body, json: true, headers: headers, method: 'POST'
-           , rejectUnauthorized: false }; 
+           , rejectUnauthorized: false };
   // Asynchronously calls the `then` function when the request's I/O
   // is done.
   return request(req, then);
@@ -116,7 +117,7 @@ function fetch (opts, then) {
                 , 'Accept': Defaults.accept };
 
   var req ={ uri: url, body: body, json: true, headers: headers, method: 'POST'
-           , rejectUnauthorized: false }; 
+           , rejectUnauthorized: false };
   return request(req, then);
 }
 
@@ -155,7 +156,6 @@ function dex_to_entry (d) {
   , direction: trendToDirection(d.Trend)
   , device: 'share2'
   , type: 'sgv'
-  // , device: 'dexcom'
   };
   return entry;
 }
@@ -169,18 +169,36 @@ function report_to_nightscout (opts, then) {
                 , 'Accept': Defaults.accept };
   var url = opts.endpoint + Defaults.nightscout_upload;
   var req = { uri: url, body: opts.entries, json: true, headers: headers, method: 'POST'
-            , rejectUnauthorized: false }; 
+            , rejectUnauthorized: false };
   return request(req, then);
 
 }
 
+function nullify_battery_status (opts, then) {
+  var shasum = crypto.createHash('sha1');
+  var hash = shasum.update(opts.API_SECRET);
+  var headers = { 'api-secret': shasum.digest('hex')
+                , 'Content-Type': Defaults['content-type']
+                , 'Accept': Defaults.accept };
+  var url = opts.endpoint + Defaults.nightscout_battery;
+  var body = { uploaderBattery: false };
+  var req = { uri: url, body: body, json: true, headers: headers, method: 'POST'
+            , rejectUnauthorized: false };
+  return request(req, then);
+}
+
 function engine (opts) {
 
+  var runs = 0;
   var failures = 0;
   function my ( ) {
-    console.log('RUNNING', 'failures', failures);
+    console.log('RUNNING', runs, 'failures', failures);
     if (my.sessionID) {
       var fetch_opts = new Object(opts.fetch);
+      if (runs === 0) {
+        console.log('First run, fetching', opts.firstFetchCount);
+        fetch_opts.maxCount = opts.firstFetchCount;
+      }
       fetch_opts.sessionID = my.sessionID;
       fetch(fetch_opts, function (err, res, glucose) {
         if (res.statusCode < 400) {
@@ -213,6 +231,16 @@ function engine (opts) {
   function to_nightscout (glucose) {
     var ns_config = new Object(opts.nightscout);
     if (glucose) {
+      if (runs === 0) {
+        nullify_battery_status(ns_config, function (err, resp) {
+          if (err) {
+            console.warn('Problem reporting battery', arguments);
+          } else {
+            console.log('Battery status hidden');
+          }
+        });
+      }
+      runs++;
       // Translate to Nightscout data.
       var entries = glucose.map(dex_to_entry);
       console.log('Entries', entries);
@@ -226,8 +254,10 @@ function engine (opts) {
       }
     }
   }
-  my( );
 
+
+
+  my( );
   return my;
 }
 
@@ -266,6 +296,7 @@ if (!module.parent) {
     login: config
   , fetch: fetch_config
   , nightscout: ns_config
+  , firstFetchCount: readENV('firstFetchCount', 3)
   };
   switch (args[0]) {
     case 'login':
