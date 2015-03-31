@@ -26,6 +26,7 @@ var request = require('request');
 var qs = require('querystring');
 var crypto = require('crypto');
 
+var MIN_PASSPHRASE_LENGTH = 12;
 
 // Defaults
 var Defaults = {
@@ -298,6 +299,20 @@ if (!module.parent) {
   , nightscout: ns_config
   , firstFetchCount: readENV('firstFetchCount', 3)
   };
+  if (readENV('API_SECRET').length < MIN_PASSPHRASE_LENGTH) {
+    var msg = ["API_SECRET should be at least", MIN_PASSPHRASE_LENGTH, "characters"];
+    var err = new Error(msg.join(' '));
+    // console.error(err);
+    throw err;
+    process.exit(1);
+  }
+  if (readENV('DEXCOM_ACCOUNT_NAME').match(/\@/)) {
+    var msg = ["DEXCOM_ACCOUNT_NAME should not be an email address"];
+    var err = new Error(msg.join(' '));
+    // console.error(err);
+    throw err;
+    process.exit(1);
+  }
   switch (args[0]) {
     case 'login':
       authorize(config, console.log.bind(console, 'login'));
