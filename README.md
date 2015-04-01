@@ -45,6 +45,7 @@ The Share to Nightscout bridge is supported on both Azure and Heroku.  Please se
 
 * `maxCount` (1) - The maximum number of records to fetch per update
 * `minutes` (1440) - The time window to search for new data per update (default is one day in minutes)
+* `firstFetchCount` (3) - Changes `maxCount` during the very first update only.
 * `SHARE_INTERVAL` (150000) - The time to wait between each update (default is 2.5 minutes in milliseconds)
 
 #### Azure Specific
