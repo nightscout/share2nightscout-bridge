@@ -18,17 +18,25 @@ share2nightscout-bridge
 [azure-environment]: https://github.com/projectkudu/kudu/wiki/Azure-runtime-environment
 [blog-post]: http://www.hanselman.com/blog/BridgingDexcomShareCGMReceiversAndNightscout.aspx
 
-The Share to Nightscout bridge copies your CGM data from Dexcom web services to a Nightscout website.  The bridge runs as `node.js index.js` and will loop forever, periodically querying Dexcom's Share web services for new CGM data.  The bridge relays any new data to a Nightscout website ([cgm-remote-monitor][c-r-m]) via the REST API.  The website then stores the data in a Mongo database.
+The Share to Nightscout bridge copies your CGM data from Dexcom web services to
+a Nightscout website.  The bridge runs as `node.js index.js` and will loop
+forever, periodically querying Dexcom's Share web services for new CGM data.
+The bridge relays any new data to a Nightscout website
+([cgm-remote-monitor][c-r-m]) via the REST API.  The website then stores the
+data in a Mongo database.
 
 ### Prerequisites
 
-* A working Dexcom Share receiver paired to an Apple device that is successfully uploading data to Dexcom.  You must be able to see the Dexcom data in the Dexcom Follow app for the bridge to work.
+* A working Dexcom Share receiver paired to an Apple device that is
+  successfully uploading data to Dexcom.  You must be able to see the Dexcom
+  data in the Dexcom Follow app for the bridge to work.
 * Your Dexcom Sharer username and password
 * A working Nightscout website and Mongo database
 
 ### Install
 
-The Share to Nightscout bridge is supported on both Azure and Heroku.  Please see the [wiki][wiki] for current install information.
+The Share to Nightscout bridge is supported on both Azure and Heroku.  Please
+see the [wiki][wiki] for current install information.
 
 ### Environment
 
@@ -46,16 +54,27 @@ The Share to Nightscout bridge is supported on both Azure and Heroku.  Please se
 * `maxCount` (1) - The maximum number of records to fetch per update
 * `minutes` (1440) - The time window to search for new data per update (default is one day in minutes)
 * `firstFetchCount` (3) - Changes `maxCount` during the very first update only.
+* `maxFailures` (3) - The program will stop running after this many
+  consecutively failed login attempts with a clear error message in the logs.
 * `SHARE_INTERVAL` (150000) - The time to wait between each update (default is 2.5 minutes in milliseconds)
 
 #### Azure Specific
 
-* It is highly recommended that you set the `API_SECRET`, `DEXCOM_ACCOUNT_NAME` and `DEXCOM_PASSWORD` in **Connection Strings** instead of **App Settings**
+* It is highly recommended that you set the `API_SECRET`, `DEXCOM_ACCOUNT_NAME` and `DEXCOM_PASSWORD` in **Connection Strings**.
 * No need to set `WEBSITE_HOSTNAME` because the value is obtained from the existing [Azure website environment][azure-environment].
 
 ### More information
 
-[As described by Scott Hanselman][blog-post], the bridge logs in to Dexcom Share as the data publisher.  It re-uses the token every `5` minutes to fetch the `maxCount` latest glucose records within the last specified `minutes`.  This information is then sent to the user's specified Nightscout install, making the data available to the beloved pebble watch and other equipment owned and operated by the receiver's owner.  It will continue to re-use the same `sessionID` until it expires, at which point it should attempt to log in again.  If it can log in again, it will continue to re-use the new token to fetch data, storing it into Nightscout.
+[As described by Scott Hanselman][blog-post], the bridge logs in to Dexcom
+Share as the data publisher.  It re-uses the token every `5` minutes to fetch
+the `maxCount` latest glucose records within the last specified `minutes`.
+This information is then sent to the user's specified Nightscout install,
+making the data available to the beloved pebble watch and other equipment owned
+and operated by the receiver's owner.  It will continue to re-use the same
+`sessionID` until it expires, at which point it should attempt to log in again.
+If it can log in again, it will continue to re-use the new token to fetch data,
+storing it into Nightscout.
 
-This project is not FDA approved, not recommended for therapy, and not recommended by [Dexcom][dexcom-eula].
+This project is not FDA approved, not recommended for therapy, and not
+recommended by [Dexcom][dexcom-eula].
 
