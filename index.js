@@ -218,13 +218,16 @@ function engine (opts) {
   function refresh_token ( ) {
     console.log('Fetching new token');
     authorize(opts.login, function (err, res, body) {
-      if (!err && body) {
+      if (!err && body && res.statusCode == 200) {
         my.sessionID = body;
         failures = 0;
         my( );
       } else {
         failures++;
-        console.log("Error refreshing token", err);
+        console.log("Error refreshing token", err, res.statusCode, body);
+        if (failures >= opts.maxFailures) {
+          throw "Too many login failures, check DEXCOM_ACCOUNT_NAME and DEXCOM_PASSWORD";
+        }
       }
     });
   }
@@ -310,6 +313,7 @@ if (!module.parent) {
     login: config
   , fetch: fetch_config
   , nightscout: ns_config
+  , maxFailures: readENV('maxFailures', 3)
   , firstFetchCount: readENV('firstFetchCount', 3)
   };
   switch (args[0]) {
