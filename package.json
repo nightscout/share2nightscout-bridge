@@ -15,6 +15,9 @@
     "type": "git",
     "url": "git://github.com/bewest/share2nightscout-bridge.git"
   },
+  "bin" : {
+    "share2-bridge" : "./index.js",
+  },
   "engines": {
     "node": "~0.10.0"
   },
