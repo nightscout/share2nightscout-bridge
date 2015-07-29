@@ -137,6 +137,30 @@ function do_everything (opts, then) {
 
 }
 
+// Map Dexcom's property values to match dexcom_reader's
+function dex_to_openaps (d) {
+/*
+[ { DT: '/Date(1426292016000-0700)/',
+    ST: '/Date(1426295616000)/',
+    Trend: 4,
+    Value: 101,
+    WT: '/Date(1426292039000)/' } ]
+*/
+  var regex = /\((.*)\)/;
+  var wall = parseInt(d.WT.match(regex)[1]);
+  var date = new Date(wall);
+  var entry = {
+    glucose: d.Value
+  , date: wall
+  , dateString: date.toISOString( )
+  , trend: d.Trend
+  , trend_arrow: trendToDirection(d.Trend)
+  , device: 'share2'
+  , type: 'sgv'
+  };
+  return entry;
+}
+
 // Map Dexcom's property values to Nightscout's.
 function dex_to_entry (d) {
 /*
@@ -326,6 +350,32 @@ if (!module.parent) {
       break;
     case 'testdaemon':
       setInterval(engine(meta), 2500);
+      break;
+    case 'file':
+      count = 4;
+      if (args[2]) { count = args[2]; }
+      fetch_config = { maxCount: count }
+      meta = {
+        login: config
+        , fetch: fetch_config
+        , maxFailures: readENV('maxFailures', 1)
+      };
+      do_everything(meta, function (err, glucose) {
+        console.log('From Dexcom', err, glucose);
+        if (glucose) {
+          // Translate to Nightscout data.
+          var entries = glucose.map(dex_to_openaps);
+          console.log('Entries', entries);
+          var file = "glucose.json";
+          if (args[1]) { file = args[1]; }
+          var fs = require('fs');
+          fs.writeFile(file, JSON.stringify(entries, null, 2), function (err) {
+            if (err) return console.log(err);
+            console.log('Wrote to ' + file);
+          });
+
+        }
+      });
       break;
     case 'run':
       // Authorize and fetch from Dexcom.
