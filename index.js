@@ -305,7 +305,7 @@ function readENV(varName, defaultValue) {
 
 // If run from commandline, run the whole program.
 if (!module.parent) {
-  if (readENV('API_SECRET').length < Defaults.MIN_PASSPHRASE_LENGTH) {
+  if (readENV('API_SECRET') && readENV('API_SECRET').length < Defaults.MIN_PASSPHRASE_LENGTH) {
     var msg = [ "API_SECRET environment variable should be at least"
               , Defaults.MIN_PASSPHRASE_LENGTH, "characters" ];
     var err = new Error(msg.join(' '));
