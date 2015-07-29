@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 /**
  * Author: Ben West
  * https://github.com/bewest
