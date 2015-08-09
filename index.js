@@ -248,6 +248,9 @@ function engine (opts) {
       // Translate to Nightscout data.
       var entries = glucose.map(dex_to_entry);
       console.log('Entries', entries);
+      if (opts && opts.callback && opts.callback.call) {
+        opts.callback(null, entries);
+      }
       if (ns_config.endpoint) {
         ns_config.entries = entries;
         // Send data to Nightscout.
