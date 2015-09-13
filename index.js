@@ -235,20 +235,23 @@ function engine (opts) {
   function to_nightscout (glucose) {
     var ns_config = Object.create(opts.nightscout);
     if (glucose) {
-      if (runs === 0) {
-        nullify_battery_status(ns_config, function (err, resp) {
-          if (err) {
-            console.warn('Problem reporting battery', arguments);
-          } else {
-            console.log('Battery status hidden');
-          }
-        });
-      }
       runs++;
       // Translate to Nightscout data.
       var entries = glucose.map(dex_to_entry);
       console.log('Entries', entries);
+      if (opts && opts.callback && opts.callback.call) {
+        opts.callback(null, entries);
+      }
       if (ns_config.endpoint) {
+        if (runs === 0) {
+          nullify_battery_status(ns_config, function (err, resp) {
+            if (err) {
+              console.warn('Problem reporting battery', arguments);
+            } else {
+              console.log('Battery status hidden');
+            }
+          });
+        }
         ns_config.entries = entries;
         // Send data to Nightscout.
         report_to_nightscout(ns_config, function (err, response, body) {
