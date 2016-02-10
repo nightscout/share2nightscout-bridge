@@ -28,13 +28,20 @@ var crypto = require('crypto');
 
 
 // Defaults
+var server = "share1"
+    if (readENV('BRIDGE_SERVER') != 'OUTSIDE') {
+        server = "share1";
+    } else {
+        server = "shareous1";
+    }
+
 var Defaults = {
   "applicationId":"d89443d2-327c-4a6f-89e5-496bbb0317db"
 , "agent": "Dexcom Share/3.0.2.11 CFNetwork/711.2.23 Darwin/14.0.0"
-, login: 'https://shareous1.dexcom.com/ShareWebServices/Services/General/LoginPublisherAccountByName'
+, login: 'https://' + server + '.dexcom.com/ShareWebServices/Services/General/LoginPublisherAccountByName'
 , accept: 'application/json'
 , 'content-type': 'application/json'
-, LatestGlucose: "https://shareous1.dexcom.com/ShareWebServices/Services/Publisher/ReadPublisherLatestGlucoseValues"
+, LatestGlucose: 'https://' + server + '.dexcom.com/ShareWebServices/Services/Publisher/ReadPublisherLatestGlucoseValues'
 // ?sessionID=e59c836f-5aeb-4b95-afa2-39cf2769fede&minutes=1440&maxCount=1"
 , nightscout_upload: '/api/v1/entries.json'
 , nightscout_battery: '/api/v1/devicestatus.json'
