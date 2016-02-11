@@ -33,7 +33,7 @@ var bridge = readENV('BRIDGE_SERVER')
     if (bridge && bridge.indexOf(".") > 1) {
     server = bridge;
    } 
-    else if (bridget && bridge == 'EU') {
+    else if (bridge && bridge == 'EU') {
         server = "shareous1.dexcom.com";
     } else {
         server = "share1.dexcom.com";
