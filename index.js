@@ -29,10 +29,10 @@ var crypto = require('crypto');
 
 // Defaults
 var server = "share1.dexcom.com"
-   if (readENV('BRIDGE_SERVER').indexOf(".") >=0) {
-        server = (readENV('BRIDGE_SERVER'));
+   if (readENV('BRIDGE_SERVER').indexOf(".") >=0) 
+   server = (readENV('BRIDGE_SERVER'));
    } 
-    else if (bridgeserver != 'OUTSIDE') {
+    if (readENV('BRIDGE_SERVER') != 'OUTSIDE') {
         server = "share1.dexcom.com";
     } else {
         server = "shareous1.dexcom.com";
