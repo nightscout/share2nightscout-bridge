@@ -29,8 +29,9 @@ var crypto = require('crypto');
 
 // Defaults
 var server = "share1.dexcom.com"
-    if (readENV('BRIDGE_SERVER').indexOf(".") > 0) {
-    server = "(readENV('BRIDGE_SERVER'))";
+var bridge = 'readENV('BRIDGE_SERVER')'
+    if (bridge.indexOf(".") > 1) {
+    server = 'bridge';
    } 
     else if (readENV('BRIDGE_SERVER') == 'EU') {
         server = "shareous1.dexcom.com";
