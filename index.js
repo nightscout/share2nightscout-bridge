@@ -32,7 +32,7 @@ var server = "share1.dexcom.com"
     if (readENV('BRIDGE_SERVER').indexOf(".") >=0) {
     server = "(readENV('BRIDGE_SERVER'))";
    } 
-    else if (readENV('BRIDGE_SERVER') == 'EU') {
+    else if (readENV('BRIDGE_SERVER') == "EU") {
         server = "shareous1.dexcom.com";
     } else {
         server = "share1.dexcom.com";
