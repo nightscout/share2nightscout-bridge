@@ -213,7 +213,7 @@ function engine (opts) {
       }
       fetch_opts.sessionID = my.sessionID;
       fetch(fetch_opts, function (err, res, glucose) {
-        if (res.statusCode < 400) {
+        if (!err && res.statusCode < 400) {
           to_nightscout(glucose);
         } else {
           my.sessionID = null;
@@ -235,7 +235,7 @@ function engine (opts) {
         my( );
       } else {
         failures++;
-        console.log("Error refreshing token", err, res.statusCode, body);
+        console.log("Error refreshing token", err, res && res.statusCode, body);
         if (failures >= opts.maxFailures) {
           throw "Too many login failures, check DEXCOM_ACCOUNT_NAME and DEXCOM_PASSWORD";
         }
