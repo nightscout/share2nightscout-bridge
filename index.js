@@ -218,13 +218,16 @@ function engine (opts) {
   function refresh_token ( ) {
     console.log('Fetching new token');
     authorize(opts.login, function (err, res, body) {
-      if (!err && body) {
+      if (!err && body && res.statusCode == 200) {
         my.sessionID = body;
         failures = 0;
         my( );
       } else {
         failures++;
-        console.log("Error refreshing token", err);
+        console.log("Error refreshing token", err, res.statusCode, body);
+        if (failures >= opts.maxFailures) {
+          throw "Too many login failures, check DEXCOM_ACCOUNT_NAME and DEXCOM_PASSWORD";
+        }
       }
     });
   }
@@ -232,20 +235,23 @@ function engine (opts) {
   function to_nightscout (glucose) {
     var ns_config = Object.create(opts.nightscout);
     if (glucose) {
-      if (runs === 0) {
-        nullify_battery_status(ns_config, function (err, resp) {
-          if (err) {
-            console.warn('Problem reporting battery', arguments);
-          } else {
-            console.log('Battery status hidden');
-          }
-        });
-      }
       runs++;
       // Translate to Nightscout data.
       var entries = glucose.map(dex_to_entry);
       console.log('Entries', entries);
+      if (opts && opts.callback && opts.callback.call) {
+        opts.callback(null, entries);
+      }
       if (ns_config.endpoint) {
+        if (runs === 0) {
+          nullify_battery_status(ns_config, function (err, resp) {
+            if (err) {
+              console.warn('Problem reporting battery', arguments);
+            } else {
+              console.log('Battery status hidden');
+            }
+          });
+        }
         ns_config.entries = entries;
         // Send data to Nightscout.
         report_to_nightscout(ns_config, function (err, response, body) {
@@ -310,6 +316,7 @@ if (!module.parent) {
     login: config
   , fetch: fetch_config
   , nightscout: ns_config
+  , maxFailures: readENV('maxFailures', 3)
   , firstFetchCount: readENV('firstFetchCount', 3)
   };
   switch (args[0]) {

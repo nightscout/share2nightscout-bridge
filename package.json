@@ -1,6 +1,6 @@
 {
   "name": "share2nightscout-bridge",
-  "version": "0.1.3",
+  "version": "0.1.5",
   "description": "Fetches data from Dexcom's webservice and puts it in Nightscout.",
   "main": "index.js",
   "scripts": {
