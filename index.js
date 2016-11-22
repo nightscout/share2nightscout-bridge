@@ -306,8 +306,12 @@ if (!module.parent) {
   };
   var ns_config = {
     API_SECRET: readENV('API_SECRET')
-  , endpoint: readENV('NS', 'https://' + readENV('WEBSITE_HOSTNAME'))
+  , endpoint: readENV('WEBSITE_HOSTNAME')
   };
+  // Assume Nightscout hostname is reachable by https unless specified otherwise
+  if (ns_config.endpoint.indexOf('http://') !== 0 && ns_config.endpoint.indexOf('https://') !== 0) {
+    ns_config.endpoint = 'https://' + ns_config.endpoint;
+  }
   var interval = readENV('SHARE_INTERVAL', 60000 * 2.5);
   var fetch_config = { maxCount: readENV('maxCount', 1)
     , minutes: readENV('minutes', 1440)
