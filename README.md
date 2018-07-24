@@ -57,6 +57,7 @@ see the [wiki][wiki] for current install information.
 * `maxFailures` (3) - The program will stop running after this many
   consecutively failed login attempts with a clear error message in the logs.
 * `SHARE_INTERVAL` (150000) - The time to wait between each update (default is 2.5 minutes in milliseconds)
+* `NS` - A fully-qualified Nightscout URL (e.g. `https://sitename.azurewebsites.net`) which overrides `WEBSITE_HOSTNAME`
 
 #### Azure Specific
 
