@@ -7,13 +7,13 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Ben West",
-  "license": "GPLv3",
+  "license": "GPL-3.0-only",
   "dependencies": {
     "request": "^2.87.0"
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/bewest/share2nightscout-bridge.git"
+    "url": "git://github.com/nightscout/share2nightscout-bridge.git"
   },
   "engines": {
     "node": "8.x"
@@ -25,6 +25,6 @@
     "cgm"
   ],
   "bugs": {
-    "url": "https://github.com/bewest/share2nightscout-bridge/issues"
+    "url": "https://github.com/nightscout/share2nightscout-bridge/issues"
   }
 }
