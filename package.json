@@ -7,7 +7,7 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Ben West",
-  "license": "GPL-3.0-or-later",
+  "license": "GPL-3.0-only",
   "dependencies": {
     "request": "^2.87.0"
   },
