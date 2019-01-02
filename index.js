@@ -213,7 +213,7 @@ function engine (opts) {
       }
       fetch_opts.sessionID = my.sessionID;
       fetch(fetch_opts, function (err, res, glucose) {
-        if (res.statusCode < 400) {
+        if (res && res.statusCode < 400) {
           to_nightscout(glucose);
         } else {
           my.sessionID = null;
@@ -229,13 +229,14 @@ function engine (opts) {
   function refresh_token ( ) {
     console.log('Fetching new token');
     authorize(opts.login, function (err, res, body) {
-      if (!err && body && res.statusCode == 200) {
+      if (!err && body && res && res.statusCode == 200) {
         my.sessionID = body;
         failures = 0;
         my( );
       } else {
         failures++;
-        console.log("Error refreshing token", err, res.statusCode, body);
+        var responseStatus = res ? res.statusCode : "response not found";
+        console.log("Error refreshing token", err, responseStatus, body);
         if (failures >= opts.maxFailures) {
           throw "Too many login failures, check DEXCOM_ACCOUNT_NAME and DEXCOM_PASSWORD";
         }
