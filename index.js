@@ -28,13 +28,22 @@ var crypto = require('crypto');
 
 
 // Defaults
+var server = "share1.dexcom.com";
+var bridge = readENV('BRIDGE_SERVER')
+    if (bridge && bridge.indexOf(".") > 1) {
+    server = bridge;
+   } 
+    else if (bridge && bridge === 'EU') {
+        server = "shareous1.dexcom.com";
+    } 
+
 var Defaults = {
   "applicationId":"d89443d2-327c-4a6f-89e5-496bbb0317db"
 , "agent": "Dexcom Share/3.0.2.11 CFNetwork/711.2.23 Darwin/14.0.0"
-, login: 'https://share1.dexcom.com/ShareWebServices/Services/General/LoginPublisherAccountByName'
+, login: 'https://' + server + '/ShareWebServices/Services/General/LoginPublisherAccountByName'
 , accept: 'application/json'
 , 'content-type': 'application/json'
-, LatestGlucose: "https://share1.dexcom.com/ShareWebServices/Services/Publisher/ReadPublisherLatestGlucoseValues"
+, LatestGlucose: 'https://' + server + '/ShareWebServices/Services/Publisher/ReadPublisherLatestGlucoseValues'
 // ?sessionID=e59c836f-5aeb-4b95-afa2-39cf2769fede&minutes=1440&maxCount=1"
 , nightscout_upload: '/api/v1/entries.json'
 , nightscout_battery: '/api/v1/devicestatus.json'
@@ -202,7 +211,7 @@ function engine (opts) {
       }
       fetch_opts.sessionID = my.sessionID;
       fetch(fetch_opts, function (err, res, glucose) {
-        if (res.statusCode < 400) {
+        if (res && res.statusCode < 400) {
           to_nightscout(glucose);
         } else {
           my.sessionID = null;
@@ -218,13 +227,14 @@ function engine (opts) {
   function refresh_token ( ) {
     console.log('Fetching new token');
     authorize(opts.login, function (err, res, body) {
-      if (!err && body && res.statusCode == 200) {
+      if (!err && body && res && res.statusCode == 200) {
         my.sessionID = body;
         failures = 0;
         my( );
       } else {
         failures++;
-        console.log("Error refreshing token", err, res.statusCode, body);
+        var responseStatus = res ? res.statusCode : "response not found";
+        console.log("Error refreshing token", err, responseStatus, body);
         if (failures >= opts.maxFailures) {
           throw "Too many login failures, check DEXCOM_ACCOUNT_NAME and DEXCOM_PASSWORD";
         }
