@@ -28,16 +28,14 @@ var crypto = require('crypto');
 
 
 // Defaults
-var server = "share1.dexcom.com"
+var server = "share1.dexcom.com";
 var bridge = readENV('BRIDGE_SERVER')
     if (bridge && bridge.indexOf(".") > 1) {
     server = bridge;
    } 
     else if (bridge && bridge === 'EU') {
         server = "shareous1.dexcom.com";
-    } else {
-        server = "share1.dexcom.com";
-    }
+    } 
 
 var Defaults = {
   "applicationId":"d89443d2-327c-4a6f-89e5-496bbb0317db"
