@@ -319,6 +319,7 @@ if (!module.parent) {
   , endpoint: readENV('NS', 'https://' + readENV('WEBSITE_HOSTNAME'))
   };
   var interval = readENV('SHARE_INTERVAL', 60000 * 2.5);
+  interval = Math.max(60000, interval);
   var fetch_config = { maxCount: readENV('maxCount', 1)
     , minutes: readENV('minutes', 1440)
   };
