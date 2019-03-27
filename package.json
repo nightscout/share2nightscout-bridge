@@ -4,7 +4,7 @@
   "description": "Fetches data from Dexcom's webservice and puts it in Nightscout.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "NODE_ENV=test mocha --timeout 30000 --exit -R tap 'tests/**/*.test.js'"
   },
   "author": "Ben West",
   "license": "GPL-3.0-only",
@@ -26,5 +26,9 @@
   ],
   "bugs": {
     "url": "https://github.com/nightscout/share2nightscout-bridge/issues"
+  },
+  "devDependencies": {
+    "mocha": "^6.0.2",
+    "should": "^13.2.3"
   }
 }
