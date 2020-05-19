@@ -25,6 +25,7 @@
 var request = require('request');
 var qs = require('querystring');
 var crypto = require('crypto');
+var meta = require('./package.json');
 
 
 // Defaults
@@ -37,9 +38,10 @@ var bridge = readENV('BRIDGE_SERVER')
         server = "shareous2.dexcom.com";
     } 
 
+
 var Defaults = {
   "applicationId":"d89443d2-327c-4a6f-89e5-496bbb0317db"
-, "agent": "Dexcom Share/3.0.2.11 CFNetwork/711.2.23 Darwin/14.0.0"
+, "agent": [meta.name, meta.version].join('/')
 , login: 'https://' + server + '/ShareWebServices/Services/General/LoginPublisherAccountByName'
 , accept: 'application/json'
 , 'content-type': 'application/json'
