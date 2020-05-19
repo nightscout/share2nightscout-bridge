@@ -28,7 +28,7 @@ var crypto = require('crypto');
 
 
 // Defaults
-var server = "share1.dexcom.com";
+var server = "share2.dexcom.com";
 var bridge = readENV('BRIDGE_SERVER')
     if (bridge && bridge.indexOf(".") > 1) {
     server = bridge;
