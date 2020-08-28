@@ -35,7 +35,7 @@ var bridge = readENV('BRIDGE_SERVER')
     server = bridge;
    } 
     else if (bridge && bridge === 'EU') {
-        server = "shareous2.dexcom.com";
+        server = "shareous1.dexcom.com";
     } 
 
 
@@ -94,9 +94,9 @@ function login_payload (opts) {
 
 // Login to Dexcom's server.
 function authorize (opts, then) {
-  var url = Defaults.login;
+  var url = opts.login || Defaults.login;
   var body = login_payload(opts);
-  var headers = { 'User-Agent': Defaults.agent
+  var headers = { 'User-Agent': opts.agent || Defaults.agent
                 , 'Content-Type': Defaults['content-type']
                 , 'Accept': Defaults.accept };
   var req ={ uri: url, body: body, json: true, headers: headers, method: 'POST'
@@ -114,7 +114,7 @@ function fetch_query (opts) {
   , minutes: opts.minutes || 1440
   , maxCount: opts.maxCount || 1
   };
-  var url = Defaults.LatestGlucose + '?' + qs.stringify(q);
+  var url = (opts.LatestGlucose || Defaults.LatestGlucose) + '?' + qs.stringify(q);
   return url;
 }
 
@@ -282,6 +282,7 @@ function engine (opts) {
 engine.fetch = fetch;
 engine.authorize = authorize;
 engine.authorize_fetch = do_everything;
+engine.Defaults = Defaults;
 module.exports = engine;
 
 function readENV(varName, defaultValue) {
