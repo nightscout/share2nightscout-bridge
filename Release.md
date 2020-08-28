@@ -1,12 +1,9 @@
 
-v0.2.2 / 2020-05-29
+v0.2.3 / 2020-08-28
 ===================
 
-  * Merge remote-tracking branch 'origin/master' into dev
-  * Merge tag '0.2.1' into dev
-  * update UA string, node compat
-  * Revert "removing OUS change"
-  * Merge pull request #38 from Kdisimone/share-server
-  * removing OUS change
-  * updating share server
-  * Update the package version
+Make further preparations for Share disappearing entirely.
+
+  * Use shareous1.dexcom.com, tweak passing parameters
+  * add history/changelog file
+  * add script to perform releases
