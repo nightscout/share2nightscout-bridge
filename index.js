@@ -8,15 +8,15 @@
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- * 
+ *
  *
  * @description: Allows user to store their Dexcom data in their own
  * Nightscout server by facilitating the transfer of latest records
@@ -32,17 +32,18 @@ var meta = require('./package.json');
 var server = "share2.dexcom.com";
 var bridge = readENV('BRIDGE_SERVER')
     if (bridge && bridge.indexOf(".") > 1) {
-    server = bridge;
-   } 
+      server = bridge;
+    }
     else if (bridge && bridge === 'EU') {
-        server = "shareous1.dexcom.com";
-    } 
+      server = "shareous1.dexcom.com";
+    }
 
 
 var Defaults = {
   "applicationId":"d89443d2-327c-4a6f-89e5-496bbb0317db"
 , "agent": [meta.name, meta.version].join('/')
-, login: 'https://' + server + '/ShareWebServices/Services/General/LoginPublisherAccountByName'
+, auth:  'https://' + server + '/ShareWebServices/Services/General/AuthenticatePublisherAccount'
+, login: 'https://' + server + '/ShareWebServices/Services/General/LoginPublisherAccountById'
 , accept: 'application/json'
 , 'content-type': 'application/json'
 , LatestGlucose: 'https://' + server + '/ShareWebServices/Services/Publisher/ReadPublisherLatestGlucoseValues'
@@ -51,6 +52,8 @@ var Defaults = {
 , nightscout_battery: '/api/v1/devicestatus.json'
 , MIN_PASSPHRASE_LENGTH: 12
 };
+
+var accountId = null;
 
 var DIRECTIONS = {
   NONE: 0
@@ -82,8 +85,7 @@ function trendToDirection (trend) {
   return Trends[trend] || Trends[0];
 }
 
-// assemble the POST body for the login endpoint
-function login_payload (opts) {
+function auth_payload (opts) {
   var body = {
     "password": opts.password
   , "applicationId" : opts.applicationId || Defaults.applicationId
@@ -92,18 +94,62 @@ function login_payload (opts) {
   return body;
 }
 
+function getAccountId(opts, then) {
+  if( accountId) {
+    then( null, { statusCode: 200 }, accountId );
+
+  } else {
+
+    var url = opts.auth || Defaults.auth;
+    var body = auth_payload(opts);
+    var headers = { 'User-Agent': opts.agent || Defaults.agent
+                  , 'Content-Type': Defaults['content-type']
+                  , 'Accept': Defaults.accept };
+    var req ={ uri: url, body: body, json: true, headers: headers, method: 'POST'
+             , rejectUnauthorized: false };
+    // Asynchronously calls the `then` function when the request's I/O
+    // is done.
+    return request(req, then);
+
+  }
+}
+
+// assemble the POST body for the login endpoint
+function login_payload (opts) {
+  var body = {
+    "password": opts.password
+  , "applicationId" : opts.applicationId || Defaults.applicationId
+  , "accountId": accountId
+  };
+  return body;
+}
+
 // Login to Dexcom's server.
 function authorize (opts, then) {
-  var url = opts.login || Defaults.login;
-  var body = login_payload(opts);
-  var headers = { 'User-Agent': opts.agent || Defaults.agent
-                , 'Content-Type': Defaults['content-type']
-                , 'Accept': Defaults.accept };
-  var req ={ uri: url, body: body, json: true, headers: headers, method: 'POST'
-           , rejectUnauthorized: false };
-  // Asynchronously calls the `then` function when the request's I/O
-  // is done.
-  return request(req, then);
+  getAccountId(opts, function (err, res, accbody) {
+    if ( !err && accbody && res && res.statusCode == 200 ) {
+      accountId = accbody;
+      console.log("accountId: " + accountId);
+
+      var url = opts.login || Defaults.login;
+      var body = login_payload(opts);
+      var headers = { 'User-Agent': opts.agent || Defaults.agent
+                    , 'Content-Type': Defaults['content-type']
+                    , 'Accept': Defaults.accept };
+      var req ={ uri: url, body: body, json: true, headers: headers, method: 'POST'
+               , rejectUnauthorized: false };
+      // Asynchronously calls the `then` function when the request's I/O
+      // is done.
+      return request(req, then);
+    } else {
+      failures++;
+      var responseStatus = res ? res.statusCode : "response not found";
+      console.log("Error authorizing", err, responseStatus, body);
+      if (failures >= opts.maxFailures) {
+        throw "Too many login failures, check DEXCOM_ACCOUNT_NAME and DEXCOM_PASSWORD";
+      }
+    }
+  });
 }
 
 // Assemble query string for fetching data.
@@ -304,14 +350,6 @@ if (!module.parent) {
     throw err;
     process.exit(1);
   }
-  if (readENV('DEXCOM_ACCOUNT_NAME', '@').match(/\@/)) {
-    var msg = [ "environment variable"
-              , "DEXCOM_ACCOUNT_NAME should be"
-              , "Dexcom Share user name, not an email address"];
-    var err = new Error(msg.join(' '));
-    throw err;
-    process.exit(1);
-  }
   var args = process.argv.slice(2);
   var config = {
     accountName: readENV('DEXCOM_ACCOUNT_NAME')
@@ -369,4 +407,3 @@ if (!module.parent) {
       break;
   }
 }
-
