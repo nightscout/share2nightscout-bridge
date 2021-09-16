@@ -142,12 +142,8 @@ function authorize (opts, then) {
       // is done.
       return request(req, then);
     } else {
-      failures++;
       var responseStatus = res ? res.statusCode : "response not found";
-      console.log("Error authorizing", err, responseStatus, body);
-      if (failures >= opts.maxFailures) {
-        throw "Too many login failures, check DEXCOM_ACCOUNT_NAME and DEXCOM_PASSWORD";
-      }
+      console.log("Cannot authorize account: ", err, responseStatus, body);
     }
   });
 }
