@@ -49,7 +49,7 @@ describe("authorize_fetch", () => {
 			(error, glucose) => {
 				glucose.should
 					.be.an.instanceOf(String)
-					.and.containEql("The server encountered an error processing the request.");
+					.and.containEql("Forbidden");
 				done(error);
 			}
 		)

@@ -33,7 +33,7 @@ describe("authorize", () => {
 				response.statusCode.should.equal(500);
 				body.should
 					.be.an.instanceOf(Object)
-					.and.have.property("Code", "SSO_AuthenticateAccountNotFound");
+					.and.have.property("Code", "SSO_AuthenticatePasswordInvalid");
 				done(error);
 			}
 
