@@ -1,5 +1,5 @@
 
-box: wercker/ubuntu12.04-nodejs0.10
+box: node:current
 build:
   steps:
       - script:
