@@ -53,7 +53,6 @@ var Defaults = {
 , MIN_PASSPHRASE_LENGTH: 12
 };
 
-var accountId = null;
 
 var DIRECTIONS = {
   NONE: 0
@@ -95,8 +94,8 @@ function auth_payload (opts) {
 }
 
 function getAccountId(opts, then) {
-  if( accountId) {
-    then( null, { statusCode: 200 }, accountId );
+  if( opts.accountId ) {
+    then( null, { statusCode: 200 }, opts.accountId );
 
   } else {
 
@@ -119,7 +118,7 @@ function login_payload (opts) {
   var body = {
     "password": opts.password
   , "applicationId" : opts.applicationId || Defaults.applicationId
-  , "accountId": accountId
+  , "accountId": opts.accountId
   };
   return body;
 }
@@ -128,8 +127,8 @@ function login_payload (opts) {
 function authorize (opts, then) {
   getAccountId(opts, function (err, res, accbody) {
     if ( !err && accbody && res && res.statusCode == 200 ) {
-      accountId = accbody;
-      console.log("accountId: " + accountId);
+      opts.accountId = accbody;
+      console.log("accountId: " + opts.accountId);
 
       var url = opts.login || Defaults.login;
       var body = login_payload(opts);
@@ -390,7 +389,7 @@ if (!module.parent) {
             ns_config.entries = entries;
             // Send data to Nightscout.
             report_to_nightscout(ns_config, function (err, response, body) {
-              console.log("Nightscout upload", 'error', err, 'status', response.statusCode, body);
+              console.log("Nightscout upload", 'error', err, 'response', response, body);
 
             });
           }
