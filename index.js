@@ -142,7 +142,8 @@ function authorize (opts, then) {
       return request(req, then);
     } else {
       var responseStatus = res ? res.statusCode : "response not found";
-      console.log("Cannot authorize account: ", err, responseStatus, body);
+      console.log("Cannot authorize account: ", err, responseStatus, accbody);
+      return process.nextTick(then, err, res, accbody);
     }
   });
 }
