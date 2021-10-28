@@ -270,6 +270,7 @@ function engine (opts) {
 
   function refresh_token ( ) {
     console.log('Fetching new token');
+    opts.login.accountId = null;
     authorize(opts.login, function (err, res, body) {
       if (!err && body && res && res.statusCode == 200) {
         my.sessionID = body;
