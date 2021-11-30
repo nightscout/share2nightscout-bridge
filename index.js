@@ -202,12 +202,18 @@ function dex_to_entry (d) {
   var regex = /\((.*)\)/;
   var wall = parseInt(d.WT.match(regex)[1]);
   var date = new Date(wall);
+  var trend = d.Trend;
+
+  if (typeof(trend) === "string" and trend in DIRECTION) {
+    trend = DIRECTIONS[trend];
+  }
+  
   var entry = {
     sgv: d.Value
   , date: wall
   , dateString: date.toISOString( )
-  , trend: d.Trend
-  , direction: trendToDirection(d.Trend)
+  , trend: trend
+  , direction: trendToDirection(trend)
   , device: 'share2'
   , type: 'sgv'
   };
