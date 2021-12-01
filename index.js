@@ -66,6 +66,45 @@ var DIRECTIONS = {
 , 'NOT COMPUTABLE': 8
 , 'RATE OUT OF RANGE': 9
 };
+function stringLowerCaseNoSpaces(str) {
+  str = str.toLowerCase()
+  while(str.indexOf(' ')>-1)
+    str = str.replace(' ','');
+  return str;
+}
+
+
+function copyObjectWithLowercaseKeys(obj) {
+  // return a copy of obj but with each key transformed to lowercase
+  // and spaces removed
+  return Object.keys(obj).reduce(function (result, key)  {
+    var newKey = stringLowerCaseNoSpaces(key);
+    result[newKey] = obj[key];
+    return result
+  }, {});
+}
+
+var LCDIRECTIONS = copyObjectWithLowercaseKeys(DIRECTIONS);
+
+
+function matchTrend(trend) {
+  // attempt to match the trend based on
+  // a) it is a number
+  // b) it matches a key in DIRECTIONS
+  // c) it matches a key in LCDIRECTIONS if converted to lowercase and all spaces removed
+
+  if (typeof(trend) !== "string")
+    return trend;
+
+  if (trend in DIRECTIONS)
+    return DIRECTIONS[trend];
+    
+  var lctrend = stringLowerCaseNoSpaces(trend);
+
+  if (lctrend in LCDIRECTIONS) return LCDIRECTIONS[lctrend];
+  return trend;
+}
+
 var Trends = (function ( ) {
   var keys = Object.keys(DIRECTIONS);
   var trends = keys.sort(function (a, b) {
@@ -202,11 +241,7 @@ function dex_to_entry (d) {
   var regex = /\((.*)\)/;
   var wall = parseInt(d.WT.match(regex)[1]);
   var date = new Date(wall);
-  var trend = d.Trend;
-
-  if (typeof(trend) === "string" and trend in DIRECTION) {
-    trend = DIRECTIONS[trend];
-  }
+  var trend = matchTrend(d.Trend);
   
   var entry = {
     sgv: d.Value
