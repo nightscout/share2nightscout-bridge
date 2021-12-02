@@ -26,7 +26,12 @@ describe("authorize_fetch", () => {
 					.be.an.instanceOf(Object);
 				glucose[0].DT.should.be.a.String().and.containEql("Date");
 				glucose[0].ST.should.be.a.String().and.containEql("Date");
-				glucose[0].Trend.should.be.a.Number();
+				glucose[0].Trend.should.exist();
+				if (typeof glucose[0].Trend === "string") {
+					glucose[0].Trend.should.be.a.String();
+				} else {				
+					glucose[0].Trend.should.be.a.Number();
+				}
 				glucose[0].Value.should.be.a.Number();
 				glucose[0].WT.should.be.a.String().and.containEql("Date");
 
