@@ -120,6 +120,7 @@ function directionToTrend (direction) {
   return trend;
 }
 function trendToDirection (trend) {
+  typeof trend === 'number' || (trend = (DIRECTIONS[trend] || 0));
   return Trends[trend] || Trends[0];
 }
 
