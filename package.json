@@ -16,7 +16,7 @@
     "url": "git://github.com/nightscout/share2nightscout-bridge.git"
   },
   "engines": {
-    "node": "12.x || 10.x || 8.x"
+    "node": "16.x || 14.x || 12.x || 10.x || 8.x"
   },
   "keywords": [
     "dexcom",
@@ -28,7 +28,7 @@
     "url": "https://github.com/nightscout/share2nightscout-bridge/issues"
   },
   "devDependencies": {
-    "mocha": "^6.0.2",
+    "mocha": "^9.2.0",
     "should": "^13.2.3"
   }
 }
