@@ -9,7 +9,7 @@
   "author": "Ben West",
   "license": "GPL-3.0-only",
   "dependencies": {
-    "request": "^2.88.0"
+    "axios": "^1.2.2"
   },
   "repository": {
     "type": "git",

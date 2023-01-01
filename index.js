@@ -22,7 +22,7 @@
  * Nightscout server by facilitating the transfer of latest records
  * from Dexcom's server into theirs.
  */
-var request = require('request');
+var axios = require('axios');
 var qs = require('querystring');
 var crypto = require('crypto');
 var meta = require('./package.json');
@@ -134,7 +134,7 @@ function auth_payload (opts) {
 
 function getAccountId(opts, then) {
   if( opts.accountId ) {
-    then( null, { statusCode: 200 }, opts.accountId );
+    then( null, { status: 200 }, opts.accountId );
 
   } else {
 
@@ -143,11 +143,20 @@ function getAccountId(opts, then) {
     var headers = { 'User-Agent': opts.agent || Defaults.agent
                   , 'Content-Type': Defaults['content-type']
                   , 'Accept': Defaults.accept };
-    var req ={ uri: url, body: body, json: true, headers: headers, method: 'POST'
-             , rejectUnauthorized: false };
+    var req ={ url: url, data: body
+             , headers: headers, method: 'POST'
+             };
+
     // Asynchronously calls the `then` function when the request's I/O
     // is done.
-    return request(req, then);
+    return axios.post(req)
+      .then(function (response) {
+        then(null, response, response.data);
+      })
+      .catch(function (err) {
+        then(err, err.response, err.response.data);
+      });
+    // return request(req, then);
 
   }
 }
@@ -165,7 +174,7 @@ function login_payload (opts) {
 // Login to Dexcom's server.
 function authorize (opts, then) {
   getAccountId(opts, function (err, res, accbody) {
-    if ( !err && accbody && res && res.statusCode == 200 ) {
+    if ( !err && accbody && res && res.status == 200 ) {
       opts.accountId = accbody;
       console.log("accountId: " + opts.accountId);
 
@@ -174,13 +183,19 @@ function authorize (opts, then) {
       var headers = { 'User-Agent': opts.agent || Defaults.agent
                     , 'Content-Type': Defaults['content-type']
                     , 'Accept': Defaults.accept };
-      var req ={ uri: url, body: body, json: true, headers: headers, method: 'POST'
-               , rejectUnauthorized: false };
+      var req ={ url: url, data: body, headers: headers, method: 'POST' };
       // Asynchronously calls the `then` function when the request's I/O
       // is done.
-      return request(req, then);
+      return axios.post(req)
+        .then(function (response) {
+          then(null, response, response.data);
+        })
+        .catch(function (err) {
+          then(err, err.response, err.response.data);
+        });
+      // return request(req, then);
     } else {
-      var responseStatus = res ? res.statusCode : "response not found";
+      var responseStatus = res ? res.status : "response not found";
       console.log("Cannot authorize account: ", err, responseStatus, accbody);
       return process.nextTick(then, err, res, accbody);
     }
@@ -209,9 +224,15 @@ function fetch (opts, then) {
                 , 'Content-Length': 0
                 , 'Accept': Defaults.accept };
 
-  var req ={ uri: url, body: body, json: true, headers: headers, method: 'POST'
-           , rejectUnauthorized: false };
-  return request(req, then);
+  var req ={ url: url, data: body, json: true, headers: headers, method: 'POST' };
+  return axios.post(req)
+    .then(function (response) {
+      then(null, response, response.data);
+    })
+    .catch(function (err) {
+      then(err, err.response, err.response.data);
+    });
+  // return request(req, then);
 }
 
 // Authenticate and fetch data from Dexcom.
@@ -263,9 +284,15 @@ function report_to_nightscout (opts, then) {
                 , 'Content-Type': Defaults['content-type']
                 , 'Accept': Defaults.accept };
   var url = opts.endpoint + Defaults.nightscout_upload;
-  var req = { uri: url, body: opts.entries, json: true, headers: headers, method: 'POST'
-            , rejectUnauthorized: false };
-  return request(req, then);
+  var req = { url: url, data: opts.entries, headers: headers, method: 'POST' };
+  return axios.post(req)
+    .then(function (response) {
+      then(null, response, response.data);
+    })
+    .catch(function (err) {
+      then(err, err.response, err.response.data);
+    });
+  // return request(req, then);
 
 }
 
@@ -277,9 +304,15 @@ function nullify_battery_status (opts, then) {
                 , 'Accept': Defaults.accept };
   var url = opts.endpoint + Defaults.nightscout_battery;
   var body = { uploaderBattery: false };
-  var req = { uri: url, body: body, json: true, headers: headers, method: 'POST'
-            , rejectUnauthorized: false };
-  return request(req, then);
+  var req = { url: url, data: body, headers: headers, method: 'POST' };
+  return axios.post(req)
+    .then(function (response) {
+      then(null, response, response.data);
+    })
+    .catch(function (err) {
+      then(err, err.response, err.response.data);
+    });
+  // return request(req, then);
 }
 
 function engine (opts) {
@@ -296,7 +329,7 @@ function engine (opts) {
       }
       fetch_opts.sessionID = my.sessionID;
       fetch(fetch_opts, function (err, res, glucose) {
-        if (res && res.statusCode < 400) {
+        if (res && res.status < 400) {
           to_nightscout(glucose);
         } else {
           my.sessionID = null;
@@ -313,13 +346,13 @@ function engine (opts) {
     console.log('Fetching new token');
     opts.login.accountId = null;
     authorize(opts.login, function (err, res, body) {
-      if (!err && body && res && res.statusCode == 200) {
+      if (!err && body && res && res.status == 200) {
         my.sessionID = body;
         failures = 0;
         my( );
       } else {
         failures++;
-        var responseStatus = res ? res.statusCode : "response not found";
+        var responseStatus = res ? res.status : "response not found";
         console.log("Error refreshing token", err, responseStatus, body);
         if (failures >= opts.maxFailures) {
           throw "Too many login failures, check DEXCOM_ACCOUNT_NAME and DEXCOM_PASSWORD";
@@ -351,7 +384,7 @@ function engine (opts) {
         ns_config.entries = entries;
         // Send data to Nightscout.
         report_to_nightscout(ns_config, function (err, response, body) {
-          console.log("Nightscout upload", 'error', err, 'status', response.statusCode, body);
+          console.log("Nightscout upload", 'error', err, 'status', response.status, body);
 
         });
       }
