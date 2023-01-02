@@ -132,9 +132,11 @@ function auth_payload (opts) {
   return body;
 }
 
-function getAccountId(opts, then) {
+async function getAccountId(opts, then) {
+  console.log('starting getAccountId');
   if( opts.accountId ) {
-    then( null, { status: 200 }, opts.accountId );
+    then( null, { status: 200}, opts.accountId );
+    // return process.nextTick(then, null, { status: 200 }, opts.accountId);
 
   } else {
 
@@ -144,18 +146,26 @@ function getAccountId(opts, then) {
                   , 'Content-Type': Defaults['content-type']
                   , 'Accept': Defaults.accept };
     var req ={ url: url, data: body
+             , params: { applicationId: opts.applicationId }
              , headers: headers, method: 'POST'
              };
 
     // Asynchronously calls the `then` function when the request's I/O
     // is done.
-    return axios.post(req)
+    console.log('sending', req.data);
+    await axios.post(req.url, body, req)
       .then(function (response) {
-        then(null, response, response.data);
+        console.log('XXX requested', req.data);
+        return then(null, response, response.data);
       })
       .catch(function (err) {
-        then(err, err.response, err.response.data);
-      });
+        console.log('XXX error', arguments);
+        return then(err, err.response, err.response.data);
+      })
+      // .finally(console.log.bind(console, 'foo'));
+    console.log('request', request);
+    // process.nextTick(Promise.resolve, request);
+      
     // return request(req, then);
 
   }
@@ -172,8 +182,9 @@ function login_payload (opts) {
 }
 
 // Login to Dexcom's server.
-function authorize (opts, then) {
-  getAccountId(opts, function (err, res, accbody) {
+async function authorize (opts, then) {
+  await getAccountId(opts, function (err, res, accbody) {
+    console.log('starting authorize', accbody);
     if ( !err && accbody && res && res.status == 200 ) {
       opts.accountId = accbody;
       console.log("accountId: " + opts.accountId);
@@ -186,18 +197,26 @@ function authorize (opts, then) {
       var req ={ url: url, data: body, headers: headers, method: 'POST' };
       // Asynchronously calls the `then` function when the request's I/O
       // is done.
-      return axios.post(req)
+      return axios.post(req.url, body, req)
         .then(function (response) {
-          then(null, response, response.data);
+          console.log('YYY, more success?', response);
+          return then(null, response, response.data);
         })
         .catch(function (err) {
-          then(err, err.response, err.response.data);
+          console.log('YYY more error?', err, err.response);
+          return then(err, err.response, err.response.data);
         });
       // return request(req, then);
     } else {
       var responseStatus = res ? res.status : "response not found";
-      console.log("Cannot authorize account: ", err, responseStatus, accbody);
-      return process.nextTick(then, err, res, accbody);
+      console.log("ZZZ Cannot authorize account: ", err, responseStatus, accbody);
+      /*
+      (async () => {
+      })( );
+      return Promise.resolve(then(err, res, accbody));
+      */
+      then(err, res, accbody);
+      // return process.nextTick(then, err, res, accbody);
     }
   });
 }
@@ -216,7 +235,7 @@ function fetch_query (opts) {
 
 // Asynchronously fetch data from Dexcom's server.
 // Will fetch `minutes` and `maxCount` records.
-function fetch (opts, then) {
+async function fetch (opts, then) {
   var url = fetch_query(opts);
   var body = "";
   var headers = { 'User-Agent': Defaults.agent
@@ -224,25 +243,26 @@ function fetch (opts, then) {
                 , 'Content-Length': 0
                 , 'Accept': Defaults.accept };
 
-  var req ={ url: url, data: body, json: true, headers: headers, method: 'POST' };
-  return axios.post(req)
+  var req ={ url: url, data: body, headers: headers, method: 'POST' };
+  return await axios.post(req.url, body, req)
     .then(function (response) {
       then(null, response, response.data);
     })
     .catch(function (err) {
+      console.log('AAAA', 'failed', err);
       then(err, err.response, err.response.data);
     });
   // return request(req, then);
 }
 
 // Authenticate and fetch data from Dexcom.
-function do_everything (opts, then) {
+async function do_everything (opts, then) {
   var login_opts = opts.login;
   var fetch_opts = opts.fetch;
-  authorize(login_opts, function (err, res, body) {
+  await authorize(login_opts, async function (err, res, body) {
 
     fetch_opts.sessionID = body;
-    fetch(fetch_opts, function (err, res, glucose) {
+    await fetch(fetch_opts, function (err, res, glucose) {
       then(err, glucose);
 
     });
@@ -277,7 +297,7 @@ function dex_to_entry (d) {
 }
 
 // Record data into Nightscout.
-function report_to_nightscout (opts, then) {
+async function report_to_nightscout (opts, then) {
   var shasum = crypto.createHash('sha1');
   var hash = shasum.update(opts.API_SECRET);
   var headers = { 'api-secret': shasum.digest('hex')
@@ -285,7 +305,7 @@ function report_to_nightscout (opts, then) {
                 , 'Accept': Defaults.accept };
   var url = opts.endpoint + Defaults.nightscout_upload;
   var req = { url: url, data: opts.entries, headers: headers, method: 'POST' };
-  return axios.post(req)
+  return await axios.post(req.url, body, req)
     .then(function (response) {
       then(null, response, response.data);
     })
@@ -296,7 +316,7 @@ function report_to_nightscout (opts, then) {
 
 }
 
-function nullify_battery_status (opts, then) {
+async function nullify_battery_status (opts, then) {
   var shasum = crypto.createHash('sha1');
   var hash = shasum.update(opts.API_SECRET);
   var headers = { 'api-secret': shasum.digest('hex')
@@ -305,7 +325,7 @@ function nullify_battery_status (opts, then) {
   var url = opts.endpoint + Defaults.nightscout_battery;
   var body = { uploaderBattery: false };
   var req = { url: url, data: body, headers: headers, method: 'POST' };
-  return axios.post(req)
+  return await axios.post(req.url, body, req)
     .then(function (response) {
       then(null, response, response.data);
     })

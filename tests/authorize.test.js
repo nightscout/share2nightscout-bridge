@@ -12,7 +12,7 @@ describe("authorize", () => {
 				accountName: accountName
 			},
 			(error, response, body) => {
-				response.statusCode.should.equal(200);
+				response.status.should.equal(200);
 				body.should
 					.be.an.instanceOf(String)
 					.and.have.property("length", 36);
@@ -30,7 +30,7 @@ describe("authorize", () => {
 				accountName: "hopefullynotarealaccountname"
 			},
 			(error, response, body) => {
-				response.statusCode.should.equal(500);
+				response.status.should.equal(500);
 				body.should
 					.be.an.instanceOf(Object)
 					.and.have.property("Code", "SSO_AuthenticatePasswordInvalid");

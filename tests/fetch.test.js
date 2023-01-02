@@ -28,7 +28,7 @@ describe("fetch", () => {
 				maxCount
 			},
 			(error, response, body) => {
-				response.statusCode.should.equal(200);
+				response.status.should.equal(200);
 				body.should
 					.be.an.instanceOf(Array)
 					.and.have.lengthOf(maxCount);
@@ -43,7 +43,7 @@ describe("fetch", () => {
 				sessionID: "bad-session-id"
 			},
 			(error, response, body) => {
-				response.statusCode.should.equal(400);
+				response.status.should.equal(400);
 				done(error);
 			}
 		);		
