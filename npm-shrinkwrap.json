@@ -1,12 +1,12 @@
 {
   "name": "share2nightscout-bridge",
-  "version": "0.2.9",
+  "version": "0.2.10",
   "lockfileVersion": 2,
   "requires": true,
   "packages": {
     "": {
       "name": "share2nightscout-bridge",
-      "version": "0.2.9",
+      "version": "0.2.10",
       "license": "GPL-3.0-only",
       "dependencies": {
         "request": "^2.88.0"
