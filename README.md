@@ -1,6 +1,19 @@
 share2nightscout-bridge
 =======================
 
+> ⚠️ **DEPRECATED**: This repository is deprecated and will be archived on 2026-03-31.
+>
+> **Migration**: Use [nightscout-connect](https://github.com/nightscout/nightscout-connect) instead.
+>
+> nightscout-connect provides the same Dexcom Share functionality with:
+> - Modern dependency stack (axios instead of deprecated `request` package)
+> - Node 18/20/22+ support
+> - Multiple data sources (Dexcom Share, LibreLinkUp, Medtronic CareLink, and more)
+>
+> See the [Migration Guide](https://github.com/nightscout/nightscout-connect#dexcom-share) for environment variable mapping.
+
+---
+
 [![wercker status](https://app.wercker.com/status/1d9a86d110cb9d42c844fa60d084e5c4/m "wercker status")](https://app.wercker.com/project/bykey/1d9a86d110cb9d42c844fa60d084e5c4)
 [![Gitter chat][gitter-img]][gitter-url]
 [Releases][releases]
