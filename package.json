@@ -16,7 +16,7 @@
     "url": "git://github.com/nightscout/share2nightscout-bridge.git"
   },
   "engines": {
-    "node": "16.x || 14.x || 12.x || 10.x || 8.x"
+    "node": ">=8.x"
   },
   "keywords": [
     "dexcom",
