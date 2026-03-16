@@ -211,7 +211,11 @@ function fetch (opts, then) {
 
   var req ={ uri: url, body: body, json: true, headers: headers, method: 'POST'
            , rejectUnauthorized: false };
-  return request(req, then);
+  return request(req, function (err, response, body) {
+    if (err) return then(err);
+    if (response.statusCode >= 300) return then(new Error("request failed with status " + response.responseStatus + " " + body));
+    return then(null, response, body);
+  });
 }
 
 // Authenticate and fetch data from Dexcom.
