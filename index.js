@@ -211,7 +211,11 @@ function fetch (opts, then) {
 
   var req ={ uri: url, body: body, json: true, headers: headers, method: 'POST'
            , rejectUnauthorized: false };
-  return request(req, then);
+  return request(req, function (err, response, body) {
+    if (err) return then(err);
+    if (response.statusCode >= 300) return then(new Error('fetch failed with status ' + response.statusCode + ': ' + JSON.stringify(body)));
+    return then(null, response, body);
+  });
 }
 
 // Authenticate and fetch data from Dexcom.
@@ -219,11 +223,12 @@ function do_everything (opts, then) {
   var login_opts = opts.login;
   var fetch_opts = opts.fetch;
   authorize(login_opts, function (err, res, body) {
-
+    if (err || !res || res.statusCode !== 200) {
+      return then(err || new Error('authorization failed: ' + JSON.stringify(body)));
+    }
     fetch_opts.sessionID = body;
     fetch(fetch_opts, function (err, res, glucose) {
       then(err, glucose);
-
     });
   });
 
@@ -330,6 +335,14 @@ function engine (opts) {
 
   function to_nightscout (glucose) {
     var ns_config = Object.create(opts.nightscout);
+    if (glucose && !Array.isArray(glucose)) {
+      // Dexcom returned HTTP 200 with a non-array body (e.g. error JSON on silent session expiry).
+      // This occurs with G7 and EU servers. Clear the session and force a re-auth.
+      console.error('Unexpected Dexcom response (expected array, got object) — clearing session:', JSON.stringify(glucose));
+      my.sessionID = null;
+      refresh_token();
+      return;
+    }
     if (glucose) {
       runs++;
       // Translate to Nightscout data.
